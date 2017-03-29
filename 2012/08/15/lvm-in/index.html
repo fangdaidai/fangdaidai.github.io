@@ -1,0 +1,820 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="lvm磁盘挂载先查看磁盘情况，这台服务器我加了两块空磁盘，sdc-50G，sdd-100G
+root@percona-node1 ~]# fdisk -l
+
+Disk /dev/sdb: 145.0 GB, 144955146240 bytes255 heads, 63 sectors/track, 17623 cylindersUnits = cylinders of 16065 * 512 =">
+<meta property="og:type" content="article">
+<meta property="og:title" content="lvm磁盘挂载和扩容">
+<meta property="og:url" content="https://fangdaidai.github.io/2012/08/15/lvm-in/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="lvm磁盘挂载先查看磁盘情况，这台服务器我加了两块空磁盘，sdc-50G，sdd-100G
+root@percona-node1 ~]# fdisk -l
+
+Disk /dev/sdb: 145.0 GB, 144955146240 bytes255 heads, 63 sectors/track, 17623 cylindersUnits = cylinders of 16065 * 512 =">
+<meta property="og:updated_time" content="2017-03-27T08:33:36.267Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="lvm磁盘挂载和扩容">
+<meta name="twitter:description" content="lvm磁盘挂载先查看磁盘情况，这台服务器我加了两块空磁盘，sdc-50G，sdd-100G
+root@percona-node1 ~]# fdisk -l
+
+Disk /dev/sdb: 145.0 GB, 144955146240 bytes255 heads, 63 sectors/track, 17623 cylindersUnits = cylinders of 16065 * 512 =">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://fangdaidai.github.io/2012/08/15/lvm-in/"/>
+
+
+
+
+
+  <title> lvm磁盘挂载和扩容 | 矜能负才.Zero </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矜能负才.Zero</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/08/15/lvm-in/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                lvm磁盘挂载和扩容
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-08-15T23:47:44+08:00">
+                2012-08-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="lvm磁盘挂载"><a href="#lvm磁盘挂载" class="headerlink" title="lvm磁盘挂载"></a>lvm磁盘挂载</h3><p>先查看磁盘情况，这台服务器我加了两块空磁盘，sdc-50G，sdd-100G</p>
+<pre><code>root@percona-node1 ~]# fdisk -l
+</code></pre><blockquote>
+<p>Disk /dev/sdb: 145.0 GB, 144955146240 bytes<br>255 heads, 63 sectors/track, 17623 cylinders<br>Units = cylinders of 16065 * 512 = 8225280 bytes<br>Sector size (logical/physical): 512 bytes / 512 bytes<br>I/O size (minimum/optimal): 512 bytes / 512 bytes<br>Disk identifier: 0x04a4264e</p>
+<p>Device Boot Start End Blocks Id System<br>/dev/sdb1 * 1 17623 141555712 83 Linux</p>
+<p>Disk /dev/sda: 32.2 GB, 32212254720 bytes<br>255 heads, 63 sectors/track, 3916 cylinders<br>Units = cylinders of 16065 * 512 = 8225280 bytes<br>Sector size (logical/physical): 512 bytes / 512 bytes<br>I/O size (minimum/optimal): 512 bytes / 512 bytes<br>Disk identifier: 0x000c23d3</p>
+<p>Device Boot Start End Blocks Id System<br>/dev/sda1 * 1 3789 30432256 83 Linux<br>/dev/sda2 3789 3917 1024000 82 Linux swap / Solaris</p>
+<p>Disk /dev/sdc: 53.7 GB, 53687091200 bytes<br>255 heads, 63 sectors/track, 6527 cylinders<br>Units = cylinders of 16065 <em> 512 = 8225280 bytes<br>Sector size (logical/physical): 512 bytes / 512 bytes<br>I/O size (minimum/optimal): 512 bytes / 512 bytes<br>Disk identifier: 0x00000000<br>Disk /dev/sdd: 107.4 GB, 107374182400 bytes<br>255 heads, 63 sectors/track, 13054 cylinders<br>Units = cylinders of 16065 </em> 512 = 8225280 bytes<br>Sector size (logical/physical): 512 bytes / 512 bytes<br>I/O size (minimum/optimal): 512 bytes / 512 bytes<br>Disk identifier: 0x00000000</p>
+</blockquote>
+<h3 id="创建lvm分区"><a href="#创建lvm分区" class="headerlink" title="创建lvm分区"></a>创建lvm分区</h3><pre><code>[root@percona-node1 ~]# fdisk /dev/sdc
+</code></pre><blockquote>
+<p>Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel<br>Building a new DOS disklabel with disk identifier 0xa9173f24.<br>Changes will remain in memory only, until you decide to write them.<br>After that, of course, the previous content won’t be recoverable.</p>
+<p>Warning: invalid flag 0x0000 of partition table 4 will be corrected by w(rite)</p>
+<p>WARNING: DOS-compatible mode is deprecated. It’s strongly recommended to<br>switch off the mode (command ‘c’) and change display units to<br>sectors (command ‘u’).</p>
+<p>Command (m for help): <font color="#FF8C00" size="3">n</font><br>Command action<br>e extended<br>p primary partition (1-4)<br>p<br>Partition number (1-4): <font color="#FF8C00" size="3">4</font><br>First cylinder (1-6527, default 1):<br>Using default value 1<br>Last cylinder, +cylinders or +size{K,M,G} (1-6527, default 6527): <font color="#FF8C00" size="3">+5000M</font></p>
+<p>Command (m for help): <font color="#FF8C00" size="3">t</font><br>Selected partition <font color="#FF8C00" size="3">4</font><br>Hex code (type L to list codes): <font color="#FF8C00" size="3">8e</font><br>Changed system type of partition 4 to 8e (Linux LVM)</p>
+<p>Command (m for help): <font color="#FF8C00" size="3">p</font></p>
+<p>Disk /dev/sdc: 53.7 GB, 53687091200 bytes<br>255 heads, 63 sectors/track, 6527 cylinders<br>Units = cylinders of 16065 * 512 = 8225280 bytes<br>Sector size (logical/physical): 512 bytes / 512 bytes<br>I/O size (minimum/optimal): 512 bytes / 512 bytes<br>Disk identifier: 0xa9173f24</p>
+<p>Device Boot Start End Blocks Id System<br>/dev/sdc4 1 638 5124703+ 8e Linux LVM</p>
+<p>Command (m for help): <font color="#FF8C00" size="3">w</font><br>The partition table has been altered!</p>
+<p>Calling ioctl() to re-read partition table.<br>Syncing disks.</p>
+</blockquote>
+<p>这个分区创建完成我才知道我只分了5000M，就是差不多5个G，sdc还有45个G没有分掉，就这样吧，下次接着增加。</p>
+<h3 id="创建pv"><a href="#创建pv" class="headerlink" title="创建pv"></a>创建pv</h3><pre><code>[root@percona-node1 dev]# pvcreate sdc4
+</code></pre><blockquote>
+<p>Physical volume “/dev/sdc4” successfully created</p>
+<h3 id="显示pv情况"><a href="#显示pv情况" class="headerlink" title="显示pv情况"></a>显示pv情况</h3></blockquote>
+<pre><code>[root@percona-node1 dev]# pvdisplay
+</code></pre><blockquote>
+<p>“/dev/sdc4” is a new physical volume of “4.89 GiB”<br>— NEW Physical volume —<br>PV Name /dev/sdc4<br>VG Name<br>PV Size 4.89 GiB<br>Allocatable NO<br>PE Size 0<br>Total PE 0<br>Free PE 0<br>Allocated PE 0<br>PV UUID n1xsHK-njVq-YUg3-m0GB-SbBp-jLH4-1m9doO</p>
+<h3 id="创建vg"><a href="#创建vg" class="headerlink" title="创建vg"></a>创建vg</h3></blockquote>
+<pre><code>[root@percona-node1 dev]# vgcreate VolGroup00 /dev/sdc4
+</code></pre><blockquote>
+<p>Volume group “VolGroup00” successfully created</p>
+<h3 id="查看vg情况"><a href="#查看vg情况" class="headerlink" title="查看vg情况"></a>查看vg情况</h3></blockquote>
+<pre><code>[root@percona-node1 dev]# vgdisplay
+</code></pre><blockquote>
+<p>— Volume group —<br>VG Name VolGroup00<br>System ID<br>Format lvm2<br>Metadata Areas 1<br>Metadata Sequence No 1<br>VG Access read/write<br>VG Status resizable<br>MAX LV 0<br>Cur LV 0<br>Open LV 0<br>Max PV 0<br>Cur PV 1<br>Act PV 1<br>VG Size 4.88 GiB<br>PE Size 4.00 MiB<br>Total PE 1250<br>Alloc PE / Size 0 / 0<br>Free PE / Size 1250 / 4.88 GiB<br>VG UUID jQ2D29-0BXa-FQiQ-U12S-iSwg-3e9Y-hEPaPP</p>
+<h3 id="创建lv"><a href="#创建lv" class="headerlink" title="创建lv"></a>创建lv</h3></blockquote>
+<pre><code>[root@percona-node1 dev]# lvcreate -L 5000M -n lvData VolGroup00
+</code></pre><blockquote>
+<p>Logical volume “lvData” created</p>
+</blockquote>
+<h3 id="格式化分区"><a href="#格式化分区" class="headerlink" title="格式化分区"></a>格式化分区</h3><pre><code>[root@percona-node1 dev]# mkfs -t ext4 /dev/VolGroup00/lvData
+</code></pre><blockquote>
+<p>mke2fs 1.41.12 (17-May-2010)<br>Filesystem label=<br>OS type: Linux<br>Block size=4096 (log=2)<br>Fragment size=4096 (log=2)<br>Stride=0 blocks, Stripe width=0 blocks<br>320000 inodes, 1280000 blocks<br>64000 blocks (5.00%) reserved for the super user<br>First data block=0<br>Maximum filesystem blocks=1312817152<br>40 block groups<br>32768 blocks per group, 32768 fragments per group<br>8000 inodes per group<br>Superblock backups stored on blocks:<br>32768, 98304, 163840, 229376, 294912, 819200, 884736</p>
+<p>Writing inode tables: done<br>Creating journal (32768 blocks): done<br>Writing superblocks and filesystem accounting information:<br>done</p>
+<p>This filesystem will be automatically checked every 22 mounts or<br>180 days, whichever comes first. Use tune2fs -c or -i to override.</p>
+</blockquote>
+<p>将格式化后的LV分区挂载到指定的目录下，就可以像普通目录一样存储数据了.</p>
+<pre><code>[root@percona-node1 /]# mkdir /u01
+[root@percona-node1 /]# mount /dev/VolGroup00/lvData /u01/
+[root@percona-node1 /]# df -h
+</code></pre><blockquote>
+<p>Filesystem Size Used Avail Use% Mounted on<br>/dev/sda1 29G 5.4G 22G 20% /<br>tmpfs 1.7G 0 1.7G 0% /dev/shm<br>/dev/sdb1 133G 60M 126G 1% /mnt/resource<br>/dev/mapper/VolGroup00-lvData<br>4.7G 9.8M 4.5G 1% /u01</p>
+</blockquote>
+<p>如果要在系统启动的时候启动LV，最好是将lvData写入fstable 文件中.</p>
+<pre><code>[root@percona-node1 /]# echo /dev/VolGroup00/lvData /u01 ext4 defaults 1 2 &gt;&gt;/etc/fstab
+</code></pre><p>这样就算一块磁盘lvm挂载完成了，接下来要扩展分区。</p>
+<h3 id="扩容当前分区"><a href="#扩容当前分区" class="headerlink" title="扩容当前分区"></a>扩容当前分区</h3><pre><code>[root@percona-node1 /]# fdisk /dev/sdd
+</code></pre><blockquote>
+<p>Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel<br>Building a new DOS disklabel with disk identifier 0x304922b8.<br>Changes will remain in memory only, until you decide to write them.<br>After that, of course, the previous content won’t be recoverable.</p>
+<p>Warning: invalid flag 0x0000 of partition table 4 will be corrected by w(rite)</p>
+<p>WARNING: DOS-compatible mode is deprecated. It’s strongly recommended to<br>switch off the mode (command ‘c’) and change display units to<br>sectors (command ‘u’).</p>
+<p>Command (m for help): <font color="#FF8C00" size="3">n</font><br>Command action<br>e extended<br>p primary partition (1-4)<br>p<br>Partition number (1-4): <font color="#FF8C00" size="3">1</font><br>First cylinder (1-13054, default 1):<br>Using default value 1<br>Last cylinder, +cylinders or +size{K,M,G} (1-13054, default 13054): <font color="#FF8C00" size="3">+100G</font><br>Value out of range.<br>Last cylinder, +cylinders or +size{K,M,G} (1-13054, default 13054): <font color="#FF8C00" size="3">13054</font></p>
+<p>Command (m for help): <font color="#FF8C00" size="3">t</font><br>Selected partition 1<br>Hex code (type L to list codes): <font color="#FF8C00" size="3">8e</font><br>Changed system type of partition 1 to 8e (Linux LVM)</p>
+<p>Command (m for help): <font color="#FF8C00" size="3">p</font></p>
+<p>Disk /dev/sdd: 107.4 GB, 107374182400 bytes<br>255 heads, 63 sectors/track, 13054 cylinders<br>Units = cylinders of 16065 * 512 = 8225280 bytes<br>Sector size (logical/physical): 512 bytes / 512 bytes<br>I/O size (minimum/optimal): 512 bytes / 512 bytes<br>Disk identifier: 0x304922b8</p>
+<p>Device Boot Start End Blocks Id System<br>/dev/sdd1 1 13054 104856223+ 8e Linux LVM</p>
+<p>Command (m for help): <font color="#FF8C00" size="3">2</font><br>The partition table has been altered!</p>
+<p>Calling ioctl() to re-read partition table.<br>Syncing disks.</p>
+</blockquote>
+<pre><code>[root@percona-node1 /]# pvcreate /dev/sdd1
+</code></pre><blockquote>
+<p>Physical volume “/dev/sdd1” successfully created</p>
+</blockquote>
+<pre><code>[root@percona-node1 /]# pvdisplay
+</code></pre><blockquote>
+<p>— Physical volume —<br>PV Name /dev/sdc4<br>VG Name VolGroup00<br>PV Size 4.89 GiB / not usable 4.59 MiB<br>Allocatable yes (but full)<br>PE Size 4.00 MiB<br>Total PE 1250<br>Free PE 0<br>Allocated PE 1250<br>PV UUID n1xsHK-njVq-YUg3-m0GB-SbBp-jLH4-1m9doO</p>
+<p>“/dev/sdd1” is a new physical volume of “100.00 GiB”<br>— NEW Physical volume —<br>PV Name /dev/sdd1<br>VG Name<br>PV Size 100.00 GiB<br>Allocatable NO<br>PE Size 0<br>Total PE 0<br>Free PE 0<br>Allocated PE 0<br>PV UUID zwNLeb-dyTr-ERrZ-t7Gz-OLT2-Chty-A5SxRo</p>
+</blockquote>
+<h3 id="增加pv"><a href="#增加pv" class="headerlink" title="增加pv"></a>增加pv</h3><pre><code>[root@percona-node1 /]# vgextend VolGroup00 /dev/sdd1
+</code></pre><blockquote>
+<p>Volume group “VolGroup00” successfully extended</p>
+</blockquote>
+<pre><code>[root@percona-node1 /]# lvdisplay
+</code></pre><blockquote>
+<p>— Logical volume —<br>LV Path /dev/VolGroup00/lvData<br>LV Name lvData<br>VG Name VolGroup00<br>LV UUID Gkx5aQ-r7Jd-GZQ1-Sd0F-P4kD-aBDp-OImEd4<br>LV Write Access read/write<br>LV Creation host, time percona-node1, 2015-05-07 06:44:39 +0000<br>LV Status available<br># open 1<br>LV Size 4.88 GiB<br>Current LE 1250<br>Segments 1<br>Allocation inherit<br>Read ahead sectors auto<br>– currently set to 256<br>Block device 253:0</p>
+</blockquote>
+<h3 id="扩展LV"><a href="#扩展LV" class="headerlink" title="扩展LV"></a>扩展LV</h3><pre><code>[root@percona-node1 /]# lvextend -L 100G /dev/VolGroup00/lvData
+</code></pre><blockquote>
+<p>Size of logical volume VolGroup00/lvData changed from 4.88 GiB (1250 extents) to 100.00 GiB (25600 extents).<br>Logical volume lvData successfully resized<br>注：这里100G是总的大小，不是增加的大小。</p>
+</blockquote>
+<pre><code>[root@percona-node1 /]# resize2fs /dev/VolGroup00/lvData
+</code></pre><blockquote>
+<p>resize2fs 1.41.12 (17-May-2010)<br>Filesystem at /dev/VolGroup00/lvData is mounted on /u01; on-line resizing required<br>old desc_blocks = 1, new_desc_blocks = 7<br>Performing an on-line resize of /dev/VolGroup00/lvData to 26214400 (4k) blocks.</p>
+<p>The filesystem on /dev/VolGroup00/lvData is now 26214400 blocks long.</p>
+<p>等待重载完成后磁盘大小就增加了。</p>
+</blockquote>
+<pre><code>[root@percona-node1 /]# df -h
+</code></pre><blockquote>
+<p>Filesystem Size Used Avail Use% Mounted on<br>/dev/sda1 29G 5.4G 22G 20% /<br>tmpfs 1.7G 0 1.7G 0% /dev/shm<br>/dev/sdb1 133G 60M 126G 1% /mnt/resource<br>/dev/mapper/VolGroup00-lvData<br>99G 18M 94G 1% /u01</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2012/08/05/mysql-incre/" rel="next" title="补充mysql增量备份和恢复">
+                <i class="fa fa-chevron-left"></i> 补充mysql增量备份和恢复
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2012/08/18/oracle-bak/" rel="prev" title="oracle备份小常识">
+                oracle备份小常识 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#lvm磁盘挂载"><span class="nav-number">1.</span> <span class="nav-text">lvm磁盘挂载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建lvm分区"><span class="nav-number">2.</span> <span class="nav-text">创建lvm分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建pv"><span class="nav-number">3.</span> <span class="nav-text">创建pv</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显示pv情况"><span class="nav-number">4.</span> <span class="nav-text">显示pv情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建vg"><span class="nav-number">5.</span> <span class="nav-text">创建vg</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看vg情况"><span class="nav-number">6.</span> <span class="nav-text">查看vg情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建lv"><span class="nav-number">7.</span> <span class="nav-text">创建lv</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#格式化分区"><span class="nav-number">8.</span> <span class="nav-text">格式化分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩容当前分区"><span class="nav-number">9.</span> <span class="nav-text">扩容当前分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#增加pv"><span class="nav-number">10.</span> <span class="nav-text">增加pv</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩展LV"><span class="nav-number">11.</span> <span class="nav-text">扩展LV</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

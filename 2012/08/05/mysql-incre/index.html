@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next pisces use-motion" lang="zh-CN">
+<html class="theme-next mist use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="linux,mysql," />
 
 
 
@@ -87,19 +87,19 @@
 
 
 
-<meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick">
+<meta name="description" content="这节还是补充一下增量恢复吧，数据库太大的时候，增量的好处就体现出来了。增量备份命令格式如下：
+innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=admin –incremental-basedir=/data/mysql/3306/backup/2015-05-05_05-00-04 –increme">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="https://fangdaidai.github.io/2017/03/23/hello-world/index.html">
-<meta property="og:site_name" content="���ܸ���.Zero">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick">
-<meta property="og:updated_time" content="2017-03-23T05:49:25.343Z">
+<meta property="og:title" content="补充mysql增量备份和恢复">
+<meta property="og:url" content="https://fangdaidai.github.io/2012/08/05/mysql-incre/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="这节还是补充一下增量恢复吧，数据库太大的时候，增量的好处就体现出来了。增量备份命令格式如下：
+innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=admin –incremental-basedir=/data/mysql/3306/backup/2015-05-05_05-00-04 –increme">
+<meta property="og:updated_time" content="2017-03-27T08:22:18.667Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick">
+<meta name="twitter:title" content="补充mysql增量备份和恢复">
+<meta name="twitter:description" content="这节还是补充一下增量恢复吧，数据库太大的时候，增量的好处就体现出来了。增量备份命令格式如下：
+innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=admin –incremental-basedir=/data/mysql/3306/backup/2015-05-05_05-00-04 –increme">
 
 
 
@@ -107,13 +107,13 @@ Quick">
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Pisces',
+    scheme: 'Mist',
     sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
       userId: '0',
-      author: 'Author'
+      author: '博主'
     },
     algolia: {
       applicationID: '',
@@ -127,16 +127,16 @@ Quick">
 
 
 
-  <link rel="canonical" href="https://fangdaidai.github.io/2017/03/23/hello-world/"/>
+  <link rel="canonical" href="https://fangdaidai.github.io/2012/08/05/mysql-incre/"/>
 
 
 
 
 
-  <title> Hello World | ���ܸ���.Zero </title>
+  <title> 补充mysql增量备份和恢复 | 矜能负才.Zero </title>
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
   
 
@@ -169,12 +169,12 @@ Quick">
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">���ܸ���.Zero</span>
+        <span class="site-title">矜能负才.Zero</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
       
-        <p class="site-subtitle"></p>
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
       
   </div>
 
@@ -199,7 +199,7 @@ Quick">
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Startseite
+            首页
           </a>
         </li>
       
@@ -209,7 +209,7 @@ Quick">
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
-            Kategorien
+            分类
           </a>
         </li>
       
@@ -219,7 +219,7 @@ Quick">
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
-            Über
+            关于
           </a>
         </li>
       
@@ -229,7 +229,7 @@ Quick">
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
-            Archiv
+            归档
           </a>
         </li>
       
@@ -239,7 +239,7 @@ Quick">
             
               <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
             
-            Tags
+            标签
           </a>
         </li>
       
@@ -272,16 +272,16 @@ Quick">
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2017/03/23/hello-world/">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/08/05/mysql-incre/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="��׳׳">
+      <meta itemprop="name" content="方大壮">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="���ܸ���.Zero">
+      <meta itemprop="name" content="矜能负才.Zero">
     </span>
 
     
@@ -293,7 +293,7 @@ Quick">
             
             
               
-                Hello World
+                补充mysql增量备份和恢复
               
             
           </h1>
@@ -306,10 +306,10 @@ Quick">
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-23T13:49:25+08:00">
-                2017-03-23
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-08-05T23:47:44+08:00">
+                2012-08-05
               </time>
             
 
@@ -318,6 +318,28 @@ Quick">
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DataBase/" itemprop="url" rel="index">
+                    <span itemprop="name">DataBase</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -344,15 +366,20 @@ Quick">
       
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+        <p>这节还是补充一下增量恢复吧，数据库太大的时候，增量的好处就体现出来了。<br>增量备份命令格式如下：</p>
+<pre><code>innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=admin –incremental-basedir=/data/mysql/3306/backup/2015-05-05_05-00-04 –incremental /data/mysql/3306/backup/
+</code></pre><p>其中–incremental-basedir指向全备目录，–incremental指向增量备份的目录。<br>上面语句执行成功之后，会在–incremental执行的目录下创建一个时间戳子目录</p>
+<p>在备份目录下，有一个文件xtrabackup_checkpoints记录着备份信息，</p>
+<p>全备的信息如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">[plain]</div><div class="line">backup_type = full-backuped</div><div class="line">from_lsn = 0</div><div class="line">to_lsn = 31829454128</div><div class="line">last_lsn = 31829454499</div><div class="line">compact = 0</div><div class="line">基于该全备的增量备份的信息如下：</div><div class="line">[plain]</div><div class="line">backup_type = incremental</div><div class="line">from_lsn = 31829454128</div><div class="line">to_lsn = 31829566882</div><div class="line">last_lsn = 31829566882</div><div class="line">compact = 0</div></pre></td></tr></table></figure>
+<p>从上面可以看出，增量备份的from_lsn正好等于全备的to_lsn。<br>由此推理，在某次备份的基础上，我们也可以再进行第二次或者第n次增量备份。</p>
+<p>增量备份的恢复比全备要复杂很多，第一步是在所有备份目录下重做已提交的日志，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[plain]</div><div class="line">innobackupex –apply-log –redo-only BASE-DIR</div><div class="line">innobackupex –apply-log –redo-only BASE-DIR –incremental-dir=INCREMENTAL-DIR-1</div><div class="line">innobackupex –apply-log BASE-DIR –incremental-dir=INCREMENTAL-DIR-2</div></pre></td></tr></table></figure>
+<p>其中BASE-DIR是指全备目录，INCREMENTAL-DIR-1是指第一次的增量备份，INCREMENTAL-DIR-2是指第二次的增量备份，以此类推。<br>这里要注意的是：最后一步的增量备份并没有–redo-only选项！还有，可以使用–use_memory提高性能。<br>以上语句执行成功之后，最终数据在BASE-DIR（即全备目录）下，这部分操作其意义在于将增量物理文件增量至全备份物理文件中，接下去进行全备份恢复即可达到目的。<br>第一步完成之后，我们开始第二步,<br>回滚未完成的日志：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[plain]</div><div class="line">innobackupex –apply-log BASE-DIR</div></pre></td></tr></table></figure>
+<p>上面执行完之后，BASE-DIR里的备份文件已完全准备就绪，最后一步是拷贝：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[plain]</div><div class="line">innobackupex –copy-back BASE-DIR</div></pre></td></tr></table></figure>
+<p>增量叠加到全备份后的第二步操作跟全备份的恢复操作步骤就一样了。</p>
 
       
     </div>
@@ -374,6 +401,14 @@ Quick">
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+        </div>
+      
 
       
         
@@ -383,14 +418,18 @@ Quick">
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2012/07/28/innobackupex-bak/" rel="next" title="innobackupex恢复mysql数据">
+                <i class="fa fa-chevron-left"></i> innobackupex恢复mysql数据
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/03/23/My-New-Post/" rel="prev" title="My New Post">
-                My New Post <i class="fa fa-chevron-right"></i>
+              <a href="/2012/08/15/lvm-in/" rel="prev" title="lvm磁盘挂载和扩容">
+                lvm磁盘挂载和扩容 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -438,22 +477,13 @@ Quick">
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            Inhaltsverzeichnis
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            Übersicht
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
-               alt="��׳׳" />
-          <p class="site-author-name" itemprop="name">��׳׳</p>
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
            
               <p class="site-description motion-element" itemprop="description"></p>
           
@@ -463,14 +493,28 @@ Quick">
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">2</span>
-                <span class="site-state-item-name">Artikel</span>
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
               </a>
             </div>
           
 
           
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
 
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
           
 
         </nav>
@@ -493,22 +537,6 @@ Quick">
       </section>
 
       
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
 
       
 
@@ -524,23 +552,23 @@ Quick">
       <div class="footer-inner">
         <div class="copyright" >
   
-  &copy; 
+  &copy;  2012 - 
   <span itemprop="copyrightYear">2017</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">��׳׳</span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
 </div>
 
 
 <div class="powered-by">
-  Erstellt mit  <a class="theme-link" href="https://hexo.io">Hexo</a>
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
 </div>
 
 <div class="theme-info">
-  Theme -
+  主题 -
   <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Pisces
+    NexT.Mist
   </a>
 </div>
 
@@ -611,13 +639,6 @@ Quick">
 
   
   
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
-
-
 
   
   <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>

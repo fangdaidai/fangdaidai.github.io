@@ -1,0 +1,794 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="linux,mysql," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="说明与内置的MySQL存储引擎相比，XtraDB提供了一些极大的改进，但它不是一款独立产品，也无法轻松放入现有MySQL安装。因此，如果您想使用这款新引擎，则必须使用提供它的产品。
+Percona Server就是这样一款产品，由领先的MySQL咨询公司Percona发布。Percona Server是一款独立的数据库产品，为用户提供了换出其MySQL安装并换入Percona Server产品的能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Percona-XtraDB-Cluster安装">
+<meta property="og:url" content="https://fangdaidai.github.io/2012/06/27/percona-install/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="说明与内置的MySQL存储引擎相比，XtraDB提供了一些极大的改进，但它不是一款独立产品，也无法轻松放入现有MySQL安装。因此，如果您想使用这款新引擎，则必须使用提供它的产品。
+Percona Server就是这样一款产品，由领先的MySQL咨询公司Percona发布。Percona Server是一款独立的数据库产品，为用户提供了换出其MySQL安装并换入Percona Server产品的能">
+<meta property="og:updated_time" content="2017-03-27T06:46:53.661Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Percona-XtraDB-Cluster安装">
+<meta name="twitter:description" content="说明与内置的MySQL存储引擎相比，XtraDB提供了一些极大的改进，但它不是一款独立产品，也无法轻松放入现有MySQL安装。因此，如果您想使用这款新引擎，则必须使用提供它的产品。
+Percona Server就是这样一款产品，由领先的MySQL咨询公司Percona发布。Percona Server是一款独立的数据库产品，为用户提供了换出其MySQL安装并换入Percona Server产品的能">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://fangdaidai.github.io/2012/06/27/percona-install/"/>
+
+
+
+
+
+  <title> Percona-XtraDB-Cluster安装 | 矜能负才.Zero </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矜能负才.Zero</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/06/27/percona-install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Percona-XtraDB-Cluster安装
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-06-27T23:47:44+08:00">
+                2012-06-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DataBase/" itemprop="url" rel="index">
+                    <span itemprop="name">DataBase</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>与内置的MySQL存储引擎相比，XtraDB提供了一些极大的改进，但它不是一款独立产品，也无法轻松放入现有MySQL安装。因此，如果您想使用这款新引擎，则必须使用提供它的产品。</p>
+<p>Percona Server就是这样一款产品，由领先的MySQL咨询公司Percona发布。Percona Server是一款独立的数据库产品，为用户提供了换出其MySQL安装并换入Percona Server产品的能力。通过这样做，就可以利用XtraDB存储引擎。Percona Server声称可以完全与MySQL兼容，因此从理论上讲，您无需更改软件中的任何代码。这确实是一个很大的优势，适合在您寻找快速性能改进时控制质量。因此，采用Percona Server的一个很好的理由是，利用XtraDB引擎来尽可能地减少代码更改。</p>
+<h3 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h3><p>ip1:<br>10.210.6.111<br>ip2:<br>10.210.108.72<br>ip3:<br>10.210.84.31</p>
+<h4 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h4><pre><code>$ yum -y install gcc gcc-c++ ncurses ncurses-devel
+
+$ yum install Percona-XtraDB-Cluster-galera-3-3.9-1.3494.rhel6.x86_64
+
+$ yum -y install perl-Time-HiRes
+$ yum install http://www.percona.com/downloads/percona-release/redhat/0.1-3/percona-release-0.1-3.noarch.rpm
+</code></pre><p>以上2步需要用到的sst模式为xtrabackup模式安装，我这里安装这个模式的时候有问题，一直没有解决。</p>
+<h4 id="下载相应源码包"><a href="#下载相应源码包" class="headerlink" title="下载相应源码包"></a>下载相应源码包</h4><pre><code>$ wget http://www.cmake.org/files/v2.8/cmake-2.8.11.2.tar.gz
+$ wget wget http://www.percona.com/downloads/Percona-XtraDB-Cluster-56/release-5.6.15-25.5/source/Percona-XtraDB-Cluster-5.6.15.tar.gz
+</code></pre><h4 id="cmake安装"><a href="#cmake安装" class="headerlink" title="cmake安装"></a>cmake安装</h4><pre><code>$ tar xzf cmake-2.8.11.2.tar.gz
+$ cd cmake-2.8.11.2
+$ ./configure
+$ make &amp;&amp; make install
+$ cd ..
+</code></pre><h4 id="Percona-5-5预编译"><a href="#Percona-5-5预编译" class="headerlink" title="Percona 5.5预编译"></a>Percona 5.5预编译</h4><pre><code>$ tar xvf Percona-XtraDB-Cluster-5.6.15.tar.gz
+$ cd Percona-XtraDB-Cluster-5.6.15
+$ useradd -M -s /sbin/nologin mysql
+$ mkdir -p /data/percona
+$ chown mysql.mysql -R /data/percona
+$ yum install bison.x86_64 bison-devel.x86_64
+$ cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/percona \
+-DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
+-DMYSQL_DATADIR=/data/percona \
+-DSYSCONFDIR=/etc \
+-DMYSQL_TCP_PORT=3306 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITH_PARTITION_STORAGE_ENGINE=1 \
+-DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
+-DWITH_MYISAM_STORAGE_ENGINE=1 \
+-DWITH_READLINE=1 \
+-DENABLED_LOCAL_INFILE=1 \
+-DDEFAULT_CHARSET=utf8 \
+-DDEFAULT_COLLATION=utf8_general_ci \
+-DWITH_EXTRA_CHARSETS=all
+</code></pre><h4 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h4><pre><code>$ make &amp;&amp; make install
+</code></pre><h4 id="设置开机自启动"><a href="#设置开机自启动" class="headerlink" title="设置开机自启动"></a>设置开机自启动</h4><pre><code>$ cp support-files/mysql.server /etc/init.d/mysqld
+$ chmod +x /etc/init.d/mysqld
+$ chkconfig –add mysqld
+$ chkconfig mysqld on
+</code></pre><h4 id="初始化数据库，设置环境变量"><a href="#初始化数据库，设置环境变量" class="headerlink" title="初始化数据库，设置环境变量"></a>初始化数据库，设置环境变量</h4><pre><code>$ /usr/local/percona/scripts/mysql_install_db –user=mysql –basedir=/usr/local/percona –datadir=/data/percona
+
+$ chown mysql.mysql -R /data/percona
+$ export PATH=$PATH:/usr/local/percona/bin
+$ echo “export PATH=\$PATH:/usr/local/percona/bin” &gt;&gt; /etc/profile
+$ . /etc/profile
+</code></pre><h4 id="节点1配置"><a href="#节点1配置" class="headerlink" title="节点1配置"></a>节点1配置</h4><p>Configuration file /etc/my.cnf for the first node should look like:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">[mysqld]</div><div class="line">datadir=/data/percona</div><div class="line">user=mysql</div><div class="line"></div><div class="line"># Path to Galera library</div><div class="line">wsrep_provider=/usr/lib64/libgalera_smm.so</div><div class="line"></div><div class="line"># Cluster connection URL contains the IPs of node#1, node#2 and node#3</div><div class="line">wsrep_cluster_address=gcomm://10.210.6.111,10.210.108.72,10.210.84.31</div><div class="line"></div><div class="line"># In order for Galera to work correctly binlog format should be ROW</div><div class="line">binlog_format=ROW</div><div class="line"></div><div class="line"># MyISAM storage engine has only experimental support</div><div class="line">default_storage_engine=InnoDB</div><div class="line"></div><div class="line"># This changes how InnoDB autoincrement locks are managed and is a requirement for Galera</div><div class="line">innodb_autoinc_lock_mode=2</div><div class="line"></div><div class="line"># Node #1 address</div><div class="line">wsrep_node_address=10.210.6.111</div><div class="line"></div><div class="line"># SST method</div><div class="line">wsrep_sst_method=rsync</div><div class="line"># Cluster name</div><div class="line">wsrep_cluster_name=my_centos_cluster</div><div class="line"></div><div class="line"># Authentication for SST method</div><div class="line">wsrep_sst_auth=”sstuser:s3cret”</div></pre></td></tr></table></figure>
+<p>初始化：</p>
+<pre><code>$ cd /usr/local/percona/scripts
+$ ./mysql_install_db –basedir=/usr/local/percona –datadir=/data/percona –user=mysql
+$ mkdir -p /var/run/mysqld
+$ chmod -R 766 /var/run/mysqld
+</code></pre><p>启动mysql：</p>
+<pre><code>$ ./bin/mysqld_safe –defaults-file=/etc/my.cnf –wsrep-cluster-address=”gcomm://” &amp;
+</code></pre><p>创建SST用户和进行相应的授权：</p>
+<pre><code>$ mysql -u root
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">DELETE FROM mysql.user WHERE user=”;</div><div class="line">GRANT RELOAD, LOCK TABLES, REPLICATION CLIENT ON *.* TO ‘sstuser’@’localhost’ IDENTIFIED BY ‘s3cret’;</div><div class="line">FLUSH PRIVILEGES;</div></pre></td></tr></table></figure>
+<h4 id="节点2配置"><a href="#节点2配置" class="headerlink" title="节点2配置"></a>节点2配置</h4><p>Configuration file /etc/my.cnf on the second node (percona2) should look like this:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">[mysqld]</div><div class="line"></div><div class="line">datadir=/data/percona</div><div class="line">user=mysql</div><div class="line"></div><div class="line"># Path to Galera library</div><div class="line">wsrep_provider=/usr/lib64/libgalera_smm.so</div><div class="line"></div><div class="line"># Cluster connection URL contains IPs of node#1, node#2 and node#3</div><div class="line">wsrep_cluster_address=gcomm://10.210.6.111,10.210.108.72,10.210.84.31</div><div class="line"></div><div class="line"># In order for Galera to work correctly binlog format should be ROW</div><div class="line">binlog_format=ROW</div><div class="line"></div><div class="line"># MyISAM storage engine has only experimental support</div><div class="line">default_storage_engine=InnoDB</div><div class="line"></div><div class="line"># This changes how InnoDB autoincrement locks are managed and is a requirement for Galera</div><div class="line">innodb_autoinc_lock_mode=2</div><div class="line"></div><div class="line"># Node #2 address</div><div class="line">wsrep_node_address=10.210.108.72</div><div class="line"></div><div class="line"># Cluster name</div><div class="line">wsrep_cluster_name=my_centos_cluster</div><div class="line"></div><div class="line"># SST method</div><div class="line">wsrep_sst_method=rsync</div><div class="line"></div><div class="line">#Authentication for SST method</div><div class="line">wsrep_sst_auth=”sstuser:s3cret”</div></pre></td></tr></table></figure>
+<p>初始化：</p>
+<pre><code>$ cd /usr/local/percona/scripts
+$ ./mysql_install_db –basedir=/usr/local/percona –datadir=/data/percona –user=mysql
+$ mkdir -p /var/run/mysqld
+$ chmod -R 766 /var/run/mysqld
+</code></pre><p>启动mysql：</p>
+<pre><code>$ ./bin/mysqld_safe –defaults-file=/etc/my.cnf &amp;
+</code></pre><h4 id="节点3配置"><a href="#节点3配置" class="headerlink" title="节点3配置"></a>节点3配置</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">[mysqld]</div><div class="line">datadir=/data/percona</div><div class="line">user=mysql</div><div class="line"></div><div class="line"># Path to Galera library</div><div class="line">wsrep_provider=/usr/lib64/libgalera_smm.so</div><div class="line"></div><div class="line"># Cluster connection URL contains IPs of node#1, node#2 and node#3</div><div class="line">wsrep_cluster_address=gcomm://10.210.6.111,10.210.108.72,10.210.84.31</div><div class="line"></div><div class="line"># In order for Galera to work correctly binlog format should be ROW</div><div class="line">binlog_format=ROW</div><div class="line"></div><div class="line"># MyISAM storage engine has only experimental support</div><div class="line">default_storage_engine=InnoDB</div><div class="line"></div><div class="line"># This changes how InnoDB autoincrement locks are managed and is a requirement for Galera</div><div class="line">innodb_autoinc_lock_mode=2</div><div class="line"></div><div class="line"># Node #2 address</div><div class="line">wsrep_node_address=10.210.84.31</div><div class="line"></div><div class="line"># Cluster name</div><div class="line">wsrep_cluster_name=my_centos_cluster</div><div class="line"></div><div class="line"># SST method</div><div class="line">wsrep_sst_method=rsync</div><div class="line"></div><div class="line">#Authentication for SST method</div><div class="line">wsrep_sst_auth=”sstuser:s3cret”</div></pre></td></tr></table></figure>
+<p>初始化：</p>
+<pre><code>$ cd /usr/local/percona/scripts
+$ ./mysql_install_db –basedir=/usr/local/percona –datadir=/data/percona –user=mysql
+$ mkdir -p /var/run/mysqld
+$ chmod -R 766 /var/run/mysqld
+</code></pre><p>启动mysql</p>
+<pre><code>$ ./bin/mysqld_safe –defaults-file=/etc/my.cnf &amp;
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">CREATE USER ‘sstuser’@’localhost’ IDENTIFIED BY ‘s3cret’;</div><div class="line">GRANT RELOAD, LOCK TABLES, REPLICATION CLIENT ON *.* TO ‘sstuser’@’localhost’;</div><div class="line">FLUSH PRIVILEGES;</div></pre></td></tr></table></figure>
+<p>查看集群状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">show status like ‘wsrep%’;</div></pre></td></tr></table></figure>
+<h3 id="同步数据"><a href="#同步数据" class="headerlink" title="同步数据"></a>同步数据</h3><pre><code>$ ./bin/mysqld –tc-heuristic-recover commit
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2012/06/25/nginx-test/" rel="next" title="nginx压力测试之工具篇">
+                <i class="fa fa-chevron-left"></i> nginx压力测试之工具篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2012/07/16/innobackupex/" rel="prev" title="innobackupex热备mysql">
+                innobackupex热备mysql <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装步骤"><span class="nav-number">2.</span> <span class="nav-text">安装步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#安装依赖包"><span class="nav-number">2.1.</span> <span class="nav-text">安装依赖包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#下载相应源码包"><span class="nav-number">2.2.</span> <span class="nav-text">下载相应源码包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cmake安装"><span class="nav-number">2.3.</span> <span class="nav-text">cmake安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Percona-5-5预编译"><span class="nav-number">2.4.</span> <span class="nav-text">Percona 5.5预编译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编译安装"><span class="nav-number">2.5.</span> <span class="nav-text">编译安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置开机自启动"><span class="nav-number">2.6.</span> <span class="nav-text">设置开机自启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化数据库，设置环境变量"><span class="nav-number">2.7.</span> <span class="nav-text">初始化数据库，设置环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#节点1配置"><span class="nav-number">2.8.</span> <span class="nav-text">节点1配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#节点2配置"><span class="nav-number">2.9.</span> <span class="nav-text">节点2配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#节点3配置"><span class="nav-number">2.10.</span> <span class="nav-text">节点3配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步数据"><span class="nav-number">3.</span> <span class="nav-text">同步数据</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

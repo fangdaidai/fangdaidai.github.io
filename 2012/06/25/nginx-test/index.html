@@ -1,0 +1,744 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="linux,nginx," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="在运维工作中，压力测试是一项非常重要的工作。比如在一个网站上线之前，能承受多大访问量、在大访问量情况下性能怎样，这些数据指标好坏将会直接影响用户体验。
+但是，在压力测试中存在一个共性，那就是压力测试的结果与实际负载结果不会完全相同，就算压力测试工作做的再好，也不能保证100%和线上性能指标相同。面对这些问题，我们只能尽量去想方设法去模拟。所以，压力测试非常有必要，有了这些数据，我们就能对自己做维护">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx压力测试之工具篇">
+<meta property="og:url" content="https://fangdaidai.github.io/2012/06/25/nginx-test/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="在运维工作中，压力测试是一项非常重要的工作。比如在一个网站上线之前，能承受多大访问量、在大访问量情况下性能怎样，这些数据指标好坏将会直接影响用户体验。
+但是，在压力测试中存在一个共性，那就是压力测试的结果与实际负载结果不会完全相同，就算压力测试工作做的再好，也不能保证100%和线上性能指标相同。面对这些问题，我们只能尽量去想方设法去模拟。所以，压力测试非常有必要，有了这些数据，我们就能对自己做维护">
+<meta property="og:updated_time" content="2017-03-27T06:31:45.823Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="nginx压力测试之工具篇">
+<meta name="twitter:description" content="在运维工作中，压力测试是一项非常重要的工作。比如在一个网站上线之前，能承受多大访问量、在大访问量情况下性能怎样，这些数据指标好坏将会直接影响用户体验。
+但是，在压力测试中存在一个共性，那就是压力测试的结果与实际负载结果不会完全相同，就算压力测试工作做的再好，也不能保证100%和线上性能指标相同。面对这些问题，我们只能尽量去想方设法去模拟。所以，压力测试非常有必要，有了这些数据，我们就能对自己做维护">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://fangdaidai.github.io/2012/06/25/nginx-test/"/>
+
+
+
+
+
+  <title> nginx压力测试之工具篇 | 矜能负才.Zero </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矜能负才.Zero</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/06/25/nginx-test/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                nginx压力测试之工具篇
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-06-25T23:47:44+08:00">
+                2012-06-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在运维工作中，压力测试是一项非常重要的工作。比如在一个网站上线之前，能承受多大访问量、在大访问量情况下性能怎样，这些数据指标好坏将会直接影响用户体验。</p>
+<p>但是，在压力测试中存在一个共性，那就是压力测试的结果与实际负载结果不会完全相同，就算压力测试工作做的再好，也不能保证100%和线上性能指标相同。面对这些问题，我们只能尽量去想方设法去模拟。所以，压力测试非常有必要，有了这些数据，我们就能对自己做维护的平台做到心中有数。</p>
+<p>目前较为常见的网站压力测试工具有webbench、ab（apache bench）、tcpcopy、loadrunner</p>
+<h3 id="webbench"><a href="#webbench" class="headerlink" title="webbench"></a>webbench</h3><p>由Lionbridge公司开发，主要测试每秒钟请求数和每秒钟数据传输量，同时支持静态、动态、SSL</p>
+<p>部署简单，静动态均可测试。适用于小型网站压力测试（单例最多可模拟3万并发）</p>
+<h3 id="ab（apache-bench）"><a href="#ab（apache-bench）" class="headerlink" title="ab（apache bench）"></a>ab（apache bench）</h3><p>Apache自带的压力测试工具，主要功能用于测试网站每秒钟处理请求个数</p>
+<p>多见用于静态压力测试，功能较弱，非专业压力测试工具</p>
+<h3 id="tcpcopy"><a href="#tcpcopy" class="headerlink" title="tcpcopy"></a>tcpcopy</h3><p>基于底层应用请求复制，可转发各种在线请求到测试服务器，具有分布式压力测试功能，所测试数据与实际生产数据较为接近<br>后起之秀，主要用于中大型压力测试，所有基于 tcp的packets均可测试</p>
+<h3 id="loadrunner"><a href="#loadrunner" class="headerlink" title="loadrunner"></a>loadrunner</h3><p>压力测试界的泰斗，可以创建虚拟用户，可以模拟用户真实访问流程从而录制成脚本，其测试结果也最为逼真<br>模拟最为逼真，并可进行独立的单元测试，但是部署配置较为复杂，需要专业人员才可以。<br>下面，笔者就以webbench为例，来讲解一下网站在上线之前压力测试是如何做的。</p>
+<h3 id="安装webbench"><a href="#安装webbench" class="headerlink" title="安装webbench"></a>安装webbench</h3><pre><code>$ wget http://home.tiscali.cz/~cz210552/distfiles/webbench-1.5.tar.gz
+$ tar zxvf webbench-1.5.tar.gz
+$ cd webbench-1.5
+$ make &amp;&amp; make install
+</code></pre><p>进行压力测试</p>
+<p>并发200时</p>
+<pre><code>$ webbench -c 200 -t 60 http://www.zzinu.com/index.php
+</code></pre><p>参数解释：-c为并发数，-t为时间（秒）</p>
+<p>Webbench – Simple Web Benchmark 1.5<br>Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.<br>Benchmarking: GET <a href="http://www.zzinu.com/index.php" target="_blank" rel="external">http://www.zzinu.com/index.php</a><br>200 clients, running 60 sec.<br>Speed=1454 pages/min, 2153340 bytes/sec.<br>Requests: 1454 susceed, 0 failed.<br>当并发200时，网站访问速度正常</p>
+<p>并发800时</p>
+<pre><code>$ webbench -c 800 -t 60 http://www.zzinu.com/index.php
+</code></pre><p>Webbench – Simple Web Benchmark 1.5<br>Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.<br>Benchmarking: GET <a href="http://www.zzinu.com/index.php" target="_blank" rel="external">http://www.zzinu.com/index.php</a><br>800 clients, running 60 sec.<br>Speed=1194 pages/min, 2057881 bytes/sec.<br>Requests: 1185 susceed, 9 failed.<br>当并发连接为800时，网站访问速度稍慢</p>
+<p>并发1600时</p>
+<pre><code>$ webbench -c 1600 -t 60 http://www.zzinu.com/index.php
+</code></pre><p>Webbench – Simple Web Benchmark 1.5<br>Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.<br>Benchmarking: GET <a href="http://www.zzinu.com/index.php" target="_blank" rel="external">http://www.zzinu.com/index.php</a><br>1600 clients, running 60 sec.<br>Speed=1256 pages/min, 1983506 bytes/sec.<br>Requests: 1183 susceed, 73 failed.<br>当并发连接为1600时，网站访问速度便非常慢了</p>
+<p>并发2000时</p>
+<pre><code>$ webbench -c 2000 -t 60 http://www.zzinu.com/index.php
+</code></pre><p>Webbench – Simple Web Benchmark 1.5<br>Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.<br>Benchmarking: GET <a href="http://www.zzinu.com/index.php" target="_blank" rel="external">http://www.zzinu.com/index.php</a><br>2000 clients, running 60 sec.<br>Speed=2154 pages/min, 1968292 bytes/sec.<br>Requests: 2076 susceed, 78 failed.<br>当并发2000时，网站便出现“502 Bad Gateway”，由此可见web服务器已无法再处理用户访问请求</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>1、压力测试工作应该放到产品上线之前，而不是上线以后</p>
+<p>2、测试时尽量跨公网进行，而不是内网</p>
+<p>3、测试时并发应当由小逐渐加大，比如并发100时观察一下网站负载是多少、打开是否流程，并发200时又是多少、网站打开缓慢时并发是多少、网站打不开时并发又是多少</p>
+<p>4、 应尽量进行单元测试，如B2C网站可以着重测试购物车、推广页面等，因为这些页面占整个网站访问量比重较大</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/nginx/" rel="tag"># nginx</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2012/06/17/mysql2/" rel="next" title="同一台linux服务器安装两个以上mysql">
+                <i class="fa fa-chevron-left"></i> 同一台linux服务器安装两个以上mysql
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2012/06/27/percona-install/" rel="prev" title="Percona-XtraDB-Cluster安装">
+                Percona-XtraDB-Cluster安装 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#webbench"><span class="nav-number">1.</span> <span class="nav-text">webbench</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ab（apache-bench）"><span class="nav-number">2.</span> <span class="nav-text">ab（apache bench）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tcpcopy"><span class="nav-number">3.</span> <span class="nav-text">tcpcopy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#loadrunner"><span class="nav-number">4.</span> <span class="nav-text">loadrunner</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装webbench"><span class="nav-number">5.</span> <span class="nav-text">安装webbench</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

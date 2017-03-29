@@ -1,0 +1,746 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="oracle," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="备份1.一致性备份（冷备，关闭实例下的备份）2.不一致性备份（热备，不用关闭实例下得备份）
+冷备与热备的区别冷备就是可以保证控制文件与数据文件的SCN号相同，冷备就是用操作系统命令将所有的控制文件、数据文件、参数文件、密码文件都复制一份，如果有损坏的文件就删除原来的文件将备份的文件复制到原路径热备不能保证备份时刻控制文件与数据文件的SCN号一样，如果损坏要恢复必须借助日志，所以一定要做归档
+备份的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="oracle备份小常识">
+<meta property="og:url" content="https://fangdaidai.github.io/2012/08/18/oracle-bak/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="备份1.一致性备份（冷备，关闭实例下的备份）2.不一致性备份（热备，不用关闭实例下得备份）
+冷备与热备的区别冷备就是可以保证控制文件与数据文件的SCN号相同，冷备就是用操作系统命令将所有的控制文件、数据文件、参数文件、密码文件都复制一份，如果有损坏的文件就删除原来的文件将备份的文件复制到原路径热备不能保证备份时刻控制文件与数据文件的SCN号一样，如果损坏要恢复必须借助日志，所以一定要做归档
+备份的">
+<meta property="og:updated_time" content="2017-03-27T08:54:58.511Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="oracle备份小常识">
+<meta name="twitter:description" content="备份1.一致性备份（冷备，关闭实例下的备份）2.不一致性备份（热备，不用关闭实例下得备份）
+冷备与热备的区别冷备就是可以保证控制文件与数据文件的SCN号相同，冷备就是用操作系统命令将所有的控制文件、数据文件、参数文件、密码文件都复制一份，如果有损坏的文件就删除原来的文件将备份的文件复制到原路径热备不能保证备份时刻控制文件与数据文件的SCN号一样，如果损坏要恢复必须借助日志，所以一定要做归档
+备份的">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://fangdaidai.github.io/2012/08/18/oracle-bak/"/>
+
+
+
+
+
+  <title> oracle备份小常识 | 矜能负才.Zero </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矜能负才.Zero</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/08/18/oracle-bak/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                oracle备份小常识
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-08-18T23:47:44+08:00">
+                2012-08-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DataBase/" itemprop="url" rel="index">
+                    <span itemprop="name">DataBase</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h3><p>1.一致性备份（冷备，关闭实例下的备份）<br>2.不一致性备份（热备，不用关闭实例下得备份）</p>
+<h3 id="冷备与热备的区别"><a href="#冷备与热备的区别" class="headerlink" title="冷备与热备的区别"></a>冷备与热备的区别</h3><p>冷备就是可以保证控制文件与数据文件的SCN号相同，冷备就是用操作系统命令将所有的控制文件、数据文件、参数文件、密码文件都复制一份，如果有损坏的文件就删除原来的文件将备份的文件复制到原路径<br>热备不能保证备份时刻控制文件与数据文件的SCN号一样，如果损坏要恢复必须借助日志，所以一定要做归档</p>
+<h3 id="备份的类型："><a href="#备份的类型：" class="headerlink" title="备份的类型："></a>备份的类型：</h3><p>完整备份（备份所有数据库块即所有的数据文件，至少一个控制文件，参数文件和密码文件）<br>部分备份（备份部分表空间或者部分表）<br>完全备份（备份所有数据文件的块，即备份所有数据文件）<br>增量备份（备份变化的数据块）<br>增量备份两种类型<br>0级备份（跟完全备份一样）、1级备份【累积型（与上一次的0级备份做比较，备份改变的数据块）、差异型（与前一次的增量备份做比较，备份改变的块）】<br>RMAN不能管理磁带 必须配介质管理库MML 数据库模式必须为归档模式 archive log list；查看是否归档</p>
+<p>手工对表空间做备份时 无法保证没有用户使用当前备份的表空间 所以必须设置为备份模式<br>alter tablespace tt begin backup<br>！cp /u01/tt.dbf /tmp 使用操作系统命令复制tt表空间的数据文件到tmp目录下<br>alter tablespace tt end backup</p>
+<h3 id="RMAN备份"><a href="#RMAN备份" class="headerlink" title="RMAN备份"></a>RMAN备份</h3><p>RMAN做备份的时候，有两种备份形式<br>1.镜像备份（image copies） 就是全部copy一份<br>2.备份集（backup set） 只备份存了数据的块，占用空间少，但是恢复速度没有镜像备份快</p>
+<p>默认RMAN备份是放入到闪回区的 如果不想放入闪回去就使用format ‘路径’ 例如：backup database format ‘/u01’ 使用select * from v$flash_recovery_area_usage；可以查看闪回区的使用情况<br>释放闪回恢复区空间</p>
+<p>1、备份数据库后删除过期归档日志<br>2、在rman环境删除控制文件总的归档信息</p>
+<pre><code>RMAN&gt;crosscheck archivelog all;
+RMAN&gt;delete expired archivelog all;
+</code></pre><p>一定要添加关键字expired，不然会将所有归档日志信息都删除</p>
+<p>如果不做第二步，闪回恢复区的空间也能释放，数据库不会挂起，但v$flash_recovery_area_usage中的信息不会被更新<br>清空内存中的数据alter system flush buffer_cache；</p>
+<h3 id="problem"><a href="#problem" class="headerlink" title="problem"></a>problem</h3><h4 id="数据库启动如果数据文件损坏如果有备份如何解决？"><a href="#数据库启动如果数据文件损坏如果有备份如何解决？" class="headerlink" title="数据库启动如果数据文件损坏如果有备份如何解决？"></a>数据库启动如果数据文件损坏如果有备份如何解决？</h4><p>只要不是系统数据文件先把损坏的数据文件离线alter tablespace datafile 6 offline；然后把数据库从mount状态启动到open状态，然后把损坏数据文件的备份复制回原来的路径下，然后recover datafile6即重新应用日志文件，然后再把该数据文件上线alter tablespace datafile 6 online；</p>
+<h4 id="RMAN中如果有备份的数据文件坏掉了如何恢复？"><a href="#RMAN中如果有备份的数据文件坏掉了如何恢复？" class="headerlink" title="RMAN中如果有备份的数据文件坏掉了如何恢复？"></a>RMAN中如果有备份的数据文件坏掉了如何恢复？</h4><p>首先关闭数据库用shutdown abort<br>启动数据库到mount状态<br>进入RMAN 使用命令restore database； 恢复tt.dbf<br>然后执行命令recover database；<br>再打开数据库alter database open；</p>
+<p>EM中可以设置每个备份片大小，这是因为操作系统上存储的单个文件大小是有限制的<br>启用块跟踪 在制定目录下系统会自动给你生成一个二进制文件，记录已经变化的数据块，如果数据发生变化就把块的地址写到这个文件中去</p>
+<p>用命令对某表空间做增量备份的0级备份</p>
+<pre><code>backup incremental level 0 cumulative device type disk‘%TAG’tablespace tt；
+backup device tupe disk tag‘%TAG’archivelog all not backed up；
+</code></pre><p>可以把控制文件放入trace文件中 如果你的所有控制文件全丢了 还是可以用trace启动数据库<br>命令alter database backup controlfile to trace;<br>步骤：<br>1 想备份控制文件到跟踪文件<br>2 复制从startup nomount<br>到alter database open<br>保存为文件/u01/cbak.txt<br>vim 跟踪文件<br>:sp /u01/cbak.txt<br>ctrl +w 可以在两窗口中移动光标<br>在跟踪文件中 :set nu 设置行号 选择从startup nomount 到alter databae open<br>定位到startup noumount 45yy<br>ctrl+w 到新的窗口 p粘贴 :wq保存<br>测试：<br>正常没法关闭数据库<br>强制关闭：shutdown abort<br>数据一定关闭</p>
+<pre><code>sqlplus / as sysdba
+start /u01/cbak.txt
+</code></pre><p>使用RMAN恢复必须保证数据库在mount状态下，如果数据库没有mount，那么就登陆到RMAN上然后手动指定数据库dbid号，命令set dbid=XXXX</p>
+<h3 id="备份方式"><a href="#备份方式" class="headerlink" title="备份方式"></a>备份方式</h3><h4 id="整库的备份"><a href="#整库的备份" class="headerlink" title="整库的备份"></a>整库的备份</h4><p>backup database<br>backup database format ‘/u01/backup/bak_%u’ 表示是备份集<br>查看创建的全库备份<br>list backup of database</p>
+<h4 id="表空间的备份"><a href="#表空间的备份" class="headerlink" title="表空间的备份"></a>表空间的备份</h4><p>backup tablespace users；<br>list backup of tablespace users；<br>删除备份： delete backupset 10；</p>
+<h4 id="数据文件备份"><a href="#数据文件备份" class="headerlink" title="数据文件备份"></a>数据文件备份</h4><p>可以对名称也可以对file_id<br>select file_id，file_name from dba_data_files；<br>backup datafile 4；<br>查看数据文件备份<br>list backup of datafile n<br>如果要查看多个文件 n=多个序号，并用逗号隔开</p>
+<h4 id="控制文件的备份"><a href="#控制文件的备份" class="headerlink" title="控制文件的备份"></a>控制文件的备份</h4><p>a.手动执行备份<br>backup current controlfile；<br>b.执行backup命令时指定include current controlfile；<br>backup database include current contorlfile；<br>c.备份系统表空间会触发备份控制文件<br>backup datafile 1；<br>d.通过configure命令将controlfileautobackup设置为on<br>configure controlfile autobackup on；<br>查看list backup of controlfile；</p>
+<h4 id="归档文件备份"><a href="#归档文件备份" class="headerlink" title="归档文件备份"></a>归档文件备份</h4><p>a.利用backup archivelog命令<br>backuo archivelog all；<br>all指备份当前所有可访问到的归档日志文件<br>until，scn，time，sequence</p>
+<p>b.执行backup命令时，指定plus archivelog<br>backup current controlfile plus archivelog；<br>在备份控制文件之前，先对所有归档文件进行备份</p>
+<p>backup ….. plus archivelog命令执行的操作<br>a.运行alter system archive log current（命令作用是对当前的redolog进行归档，并且切换redolog)<br>b.执行backup archivelog all 命令<br>c.执行backup …..命令指定项进行备份<br>d.再次运行alter system archive log current对当前redolog进行归档<br>e.对新生成的尚未备份的归档进行备份</p>
+<p>查看已备份的归档日志片段</p>
+<pre><code>list backup of archivelog；
+</code></pre><h4 id="初始化参数文件的备份"><a href="#初始化参数文件的备份" class="headerlink" title="初始化参数文件的备份"></a>初始化参数文件的备份</h4><p>RMAN自动备份服务器的初始化参数文件，并放于控制文件的备份片段中，极少需要对spfile文件备份<br>备份命令：backup spfile；</p>
+<h4 id="对备份集做备份"><a href="#对备份集做备份" class="headerlink" title="对备份集做备份"></a>对备份集做备份</h4><p>对备份集做备份只能放到磁带中，命令：<br>backup backupset all；<br>备份指定的备份集<br>backup backupset n；（n表示备份集ID，可以指定多个）</p>
+<h3 id="RMAN命令"><a href="#RMAN命令" class="headerlink" title="RMAN命令"></a>RMAN命令</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line">1 显示RMAN默认配置：show</div><div class="line">show all;</div><div class="line">\#default 表示初始化默认值</div><div class="line">2 列出备份信息–list命令</div><div class="line">查看备份集、备份镜像、归档文件等</div><div class="line">a.列出所有备份信息</div><div class="line">list backup ;</div><div class="line">b. 列出所有备份控制文件信息</div><div class="line">list backup of controlfile ;</div><div class="line">c.列出指定数据文件的备份</div><div class="line">list backup of datafile 4;</div><div class="line">d.列出所有备份归档文件信息</div><div class="line">list backup of archivelog all;</div><div class="line">e.列出表空间备份信息</div><div class="line">list copy of tablespace ‘users’</div><div class="line">f.列出当前的所有归档</div><div class="line">list archivelog all</div><div class="line">g.列出所有无效备份</div><div class="line">list expired backup;（无效备份指备份信息中还存在但是在操作系统中被删除的备份）</div><div class="line"></div><div class="line">删除备份—delete 命令</div><div class="line">a.删除过期备份，RMAN根据备份冗余策略确定备份是否过期</div><div class="line">delete obsolete ;</div><div class="line">b.删除无效备份：首先执行crosscheck 命令核对备份集，如果发现备份无效，RMAN会对该备份集标记为expired</div><div class="line">删除 delete expired backup ;</div><div class="line">c.删除expired 副本</div><div class="line">delete expired copy;</div><div class="line">d.删除指定的备份集</div><div class="line">delete backupset 1;</div><div class="line">f.删除指定备份片</div><div class="line">delete backuppiece ‘/u01/aa.bak’</div><div class="line">g.删除特定映像副本</div><div class="line">delete datafile copy ‘/u01/a.bak’</div><div class="line">f.删除所有映像副本</div><div class="line">delete copy;</div><div class="line">g.在备份后删除输入对象</div><div class="line"></div><div class="line">backup archivelog all delete （all） input; 备份所有的归档日志文件并且删除（所有）归档日志文件</div><div class="line">backup backupset 11 format ‘/u01/%u.bak’ delete input;</div><div class="line">4 报表显示—report 命令</div><div class="line">a.查看7天前的数据库模式</div><div class="line">report schema at time ‘sysdate-7’;</div><div class="line">b.查看所有需要备份的文件</div><div class="line">report need backup ;</div><div class="line">c.查看指定表空间是否需要备份</div><div class="line">report need bakcup tablespace system</div><div class="line">d.查看过期备份</div><div class="line">report obsolete ;</div><div class="line"></div><div class="line">5 执行检查—crosscheck 命令</div><div class="line">用来检查备份或归档的物理文件的状态，如果物理文件存在，并且控制文件或恢复目录中匹配则标记为available 如果物理文件已经不存在则标记为expired 无效。</div><div class="line">要手工删除expired记录</div><div class="line"></div><div class="line">检查所有归档文件</div><div class="line">crosscheck archivelog all;</div><div class="line">检查所有的备份集</div><div class="line">crosscheck backup;</div><div class="line"></div><div class="line">6 修改状态 —change命令</div><div class="line">修改备份文件或归档文件的状态，在控制文件或恢复目录中，记录状态为：available 可用 和 unavailable 不可用。</div><div class="line">修改指定备份集为unavailable (注意不能修改闪回区的备份集）</div><div class="line">change backupset 35 unavailable;（如果设置某个备份集的状态为unavailable，那么使用备份集恢复的时候系统会自动跳过该备份集）</div><div class="line">修改表空间的备份集为unavailable;</div><div class="line">change backup of tablespace users unavailable;</div><div class="line">修改指定归档文件状态为unavailable</div><div class="line">change archivelog logseq=n unavailable ;</div><div class="line">n为归档文件序号，可用通过list archivielog all 或者查询v$archived_log获得</div><div class="line"></div><div class="line">change 命令附带delete 子句</div><div class="line">change archivelog logseq=n delete</div><div class="line">修改记录状态同时，直接删除物理文件。</div></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/oracle/" rel="tag"># oracle</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2012/08/15/lvm-in/" rel="next" title="lvm磁盘挂载和扩容">
+                <i class="fa fa-chevron-left"></i> lvm磁盘挂载和扩容
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2012/08/31/weblogic-log/" rel="prev" title="Weblogic日志规范">
+                Weblogic日志规范 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#备份"><span class="nav-number">1.</span> <span class="nav-text">备份</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#冷备与热备的区别"><span class="nav-number">2.</span> <span class="nav-text">冷备与热备的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#备份的类型："><span class="nav-number">3.</span> <span class="nav-text">备份的类型：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RMAN备份"><span class="nav-number">4.</span> <span class="nav-text">RMAN备份</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#problem"><span class="nav-number">5.</span> <span class="nav-text">problem</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据库启动如果数据文件损坏如果有备份如何解决？"><span class="nav-number">5.1.</span> <span class="nav-text">数据库启动如果数据文件损坏如果有备份如何解决？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RMAN中如果有备份的数据文件坏掉了如何恢复？"><span class="nav-number">5.2.</span> <span class="nav-text">RMAN中如果有备份的数据文件坏掉了如何恢复？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#备份方式"><span class="nav-number">6.</span> <span class="nav-text">备份方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#整库的备份"><span class="nav-number">6.1.</span> <span class="nav-text">整库的备份</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#表空间的备份"><span class="nav-number">6.2.</span> <span class="nav-text">表空间的备份</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据文件备份"><span class="nav-number">6.3.</span> <span class="nav-text">数据文件备份</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制文件的备份"><span class="nav-number">6.4.</span> <span class="nav-text">控制文件的备份</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#归档文件备份"><span class="nav-number">6.5.</span> <span class="nav-text">归档文件备份</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化参数文件的备份"><span class="nav-number">6.6.</span> <span class="nav-text">初始化参数文件的备份</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对备份集做备份"><span class="nav-number">6.7.</span> <span class="nav-text">对备份集做备份</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RMAN命令"><span class="nav-number">7.</span> <span class="nav-text">RMAN命令</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

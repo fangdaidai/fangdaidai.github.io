@@ -1,0 +1,736 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Middleware," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="日志说明server 运行日志WebLogic server在启动或运行过程中会把相关日志写入Server.log。该文件记录WebLogic的启动及关闭等其他运行信息。
+Http访问日志在WebLogic中可以对用HTTP，HTTPS协议访问的服务器上的文件都做记录，该LOG文件默认的名字为Access.log,内容如下，该文件具体记录在某个时间，某个IP地址的客户端访问了服务器上的那个文件。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Weblogic日志规范">
+<meta property="og:url" content="https://fangdaidai.github.io/2012/08/31/weblogic-log/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="日志说明server 运行日志WebLogic server在启动或运行过程中会把相关日志写入Server.log。该文件记录WebLogic的启动及关闭等其他运行信息。
+Http访问日志在WebLogic中可以对用HTTP，HTTPS协议访问的服务器上的文件都做记录，该LOG文件默认的名字为Access.log,内容如下，该文件具体记录在某个时间，某个IP地址的客户端访问了服务器上的那个文件。">
+<meta property="og:image" content="http://oniarr76b.bkt.clouddn.com/rizhi.png">
+<meta property="og:image" content="https://fangdaidai.github.io/img/rizhi.png">
+<meta property="og:updated_time" content="2017-03-28T06:20:41.414Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Weblogic日志规范">
+<meta name="twitter:description" content="日志说明server 运行日志WebLogic server在启动或运行过程中会把相关日志写入Server.log。该文件记录WebLogic的启动及关闭等其他运行信息。
+Http访问日志在WebLogic中可以对用HTTP，HTTPS协议访问的服务器上的文件都做记录，该LOG文件默认的名字为Access.log,内容如下，该文件具体记录在某个时间，某个IP地址的客户端访问了服务器上的那个文件。">
+<meta name="twitter:image" content="http://oniarr76b.bkt.clouddn.com/rizhi.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://fangdaidai.github.io/2012/08/31/weblogic-log/"/>
+
+
+
+
+
+  <title> Weblogic日志规范 | 矜能负才.Zero </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矜能负才.Zero</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/08/31/weblogic-log/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Weblogic日志规范
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-08-31T23:47:44+08:00">
+                2012-08-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/中间件/" itemprop="url" rel="index">
+                    <span itemprop="name">中间件</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="日志说明"><a href="#日志说明" class="headerlink" title="日志说明"></a>日志说明</h3><h4 id="server-运行日志"><a href="#server-运行日志" class="headerlink" title="server 运行日志"></a>server 运行日志</h4><p>WebLogic server在启动或运行过程中会把相关日志写入Server.log。该文件记录WebLogic的启动及关闭等其他运行信息。</p>
+<h4 id="Http访问日志"><a href="#Http访问日志" class="headerlink" title="Http访问日志"></a>Http访问日志</h4><p>在WebLogic中可以对用HTTP，HTTPS协议访问的服务器上的文件都做记录，该LOG文件默认的名字为Access.log,内容如下，该文件具体记录在某个时间，某个IP地址的客户端访问了服务器上的那个文件。</p>
+<h4 id="域日志"><a href="#域日志" class="headerlink" title="域日志"></a>域日志</h4><p>记录一个DOMIAN的运行情况，一个DOMAIN中的各个WebLogic server可以把它们的一些运行信息（比如：很严重的错误）发送给一个DOMAIN的ADMINISTRATOR SERVER上，ADMINISTRATOR SERVER把这些信息写到DOMAIN 日志中。默认名为：domain_name.log</p>
+<h4 id="业务日志grsds-log"><a href="#业务日志grsds-log" class="headerlink" title="业务日志grsds.log"></a>业务日志grsds.log</h4><p>记录服务处理的业务情况，根据对应的日志级别将对应的日志写入grsds.log中。</p>
+<p>应用集成平台交易接口日志 osb.log</p>
+<p>该日志记录个税与核心征管的接口交互报文情况。</p>
+<p>业务报错日志grsdserror.log</p>
+<p>记录业务处理报错情况。</p>
+<h3 id="日志目录"><a href="#日志目录" class="headerlink" title="日志目录"></a>日志目录</h3><h4 id="Server-log"><a href="#Server-log" class="headerlink" title="Server.log"></a>Server.log</h4><p>/weblogic/user_projects/domains/yourdomain/servers/yourServer/logs</p>
+<h4 id="Access-log"><a href="#Access-log" class="headerlink" title="Access.log"></a>Access.log</h4><p>/weblogic/user_projects/domains/ yourdomain/servers/ yourServer/logs</p>
+<h4 id="domain-name-log"><a href="#domain-name-log" class="headerlink" title="domain_name.log"></a>domain_name.log</h4><p>/weblogic/user_projects/domains/ yourdomain/servers/ yourServer/logs</p>
+<h3 id="日志规范和配置方法"><a href="#日志规范和配置方法" class="headerlink" title="日志规范和配置方法"></a>日志规范和配置方法</h3><p>domian.log、server.log和access.log都有一定的规范，具体配置方法需要登录控制台进行配置。</p>
+<p>domian运行日志输出规范配置方法：</p>
+<p>登录weblogic后台</p>
+<p>左侧菜单：zjhx_domian</p>
+<p>右侧菜单：配置-&gt;日志记录</p>
+<p><img src="http://oniarr76b.bkt.clouddn.com/rizhi.png" alt="日志"><br><img src="/img/rizhi.png" alt=""></p>
+<h4 id="Serve-log配置方法"><a href="#Serve-log配置方法" class="headerlink" title="Serve.log配置方法"></a>Serve.log配置方法</h4><p>登录weblogic后台</p>
+<p>左侧菜单：环境-&gt;服务器</p>
+<p>右侧菜单：ZjhxServer(管理)-&gt;日志记录-&gt;一般信息</p>
+<p>rizhi2——点击放大</p>
+<p>rizhi3——-点击放大</p>
+<h4 id="http日志输出规范配置方法"><a href="#http日志输出规范配置方法" class="headerlink" title="http日志输出规范配置方法"></a>http日志输出规范配置方法</h4><p>登录weblogic后台</p>
+<p>左侧菜单：环境-&gt;服务器</p>
+<p>右侧菜单：ZjhxServer(管理)-&gt;日志记录-&gt;HTTP</p>
+<p>rizhi4——-点击放大</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Middleware/" rel="tag"># Middleware</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2012/08/18/oracle-bak/" rel="next" title="oracle备份小常识">
+                <i class="fa fa-chevron-left"></i> oracle备份小常识
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#日志说明"><span class="nav-number">1.</span> <span class="nav-text">日志说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#server-运行日志"><span class="nav-number">1.1.</span> <span class="nav-text">server 运行日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Http访问日志"><span class="nav-number">1.2.</span> <span class="nav-text">Http访问日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#域日志"><span class="nav-number">1.3.</span> <span class="nav-text">域日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#业务日志grsds-log"><span class="nav-number">1.4.</span> <span class="nav-text">业务日志grsds.log</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日志目录"><span class="nav-number">2.</span> <span class="nav-text">日志目录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Server-log"><span class="nav-number">2.1.</span> <span class="nav-text">Server.log</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Access-log"><span class="nav-number">2.2.</span> <span class="nav-text">Access.log</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#domain-name-log"><span class="nav-number">2.3.</span> <span class="nav-text">domain_name.log</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日志规范和配置方法"><span class="nav-number">3.</span> <span class="nav-text">日志规范和配置方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Serve-log配置方法"><span class="nav-number">3.1.</span> <span class="nav-text">Serve.log配置方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#http日志输出规范配置方法"><span class="nav-number">3.2.</span> <span class="nav-text">http日志输出规范配置方法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

@@ -1,0 +1,936 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="以前的公司采用过zookeeper+单独开发的jar包作为同步配置文件的工具，用了几次，逻辑很乱文件删除风险过大，反思过后其实rsync是更好的选择，在运维管理上，通过配置分发或者修改，能更好地管理文件。
+操作系统：CentOS源服务器：10.0.0.20目标服务器：10.0.0.11
+目的：把源服务器上/var/www/html/admin.vane.com/admin/UploadFile/a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="准实时同步files小鲜肉rsync+inotify">
+<meta property="og:url" content="https://fangdaidai.github.io/2012/06/01/rsync/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="以前的公司采用过zookeeper+单独开发的jar包作为同步配置文件的工具，用了几次，逻辑很乱文件删除风险过大，反思过后其实rsync是更好的选择，在运维管理上，通过配置分发或者修改，能更好地管理文件。
+操作系统：CentOS源服务器：10.0.0.20目标服务器：10.0.0.11
+目的：把源服务器上/var/www/html/admin.vane.com/admin/UploadFile/a">
+<meta property="og:updated_time" content="2017-03-27T05:41:31.467Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="准实时同步files小鲜肉rsync+inotify">
+<meta name="twitter:description" content="以前的公司采用过zookeeper+单独开发的jar包作为同步配置文件的工具，用了几次，逻辑很乱文件删除风险过大，反思过后其实rsync是更好的选择，在运维管理上，通过配置分发或者修改，能更好地管理文件。
+操作系统：CentOS源服务器：10.0.0.20目标服务器：10.0.0.11
+目的：把源服务器上/var/www/html/admin.vane.com/admin/UploadFile/a">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://fangdaidai.github.io/2012/06/01/rsync/"/>
+
+
+
+
+
+  <title> 准实时同步files小鲜肉rsync+inotify | 矜能负才.Zero </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矜能负才.Zero</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/06/01/rsync/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                准实时同步files小鲜肉rsync+inotify
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-06-01T23:47:44+08:00">
+                2012-06-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>以前的公司采用过zookeeper+单独开发的jar包作为同步配置文件的工具，用了几次，逻辑很乱文件删除风险过大，反思过后其实rsync是更好的选择，在运维管理上，通过配置分发或者修改，能更好地管理文件。</p>
+<p>操作系统：CentOS<br>源服务器：10.0.0.20<br>目标服务器：10.0.0.11</p>
+<p>目的：把源服务器上/var/www/html/admin.vane.com/admin/UploadFile/apphelp/files<br>目录实时同步到目标服务器的/var/www/html/help下</p>
+<h3 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h3><h4 id="目标服务器安装Rsync服务端"><a href="#目标服务器安装Rsync服务端" class="headerlink" title="目标服务器安装Rsync服务端"></a>目标服务器安装Rsync服务端</h4><p>在目标服务器10.0.0.11上操作</p>
+<p>1、关闭SELINUX</p>
+<pre><code>$ vi /etc/selinux/config #编辑防火墙配置文件
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#SELINUX=enforcing #注释掉</div><div class="line"></div><div class="line">#SELINUXTYPE=targeted #注释掉</div><div class="line"></div><div class="line">SELINUX=disabled #增加</div></pre></td></tr></table></figure>
+<p>:wq! #保存，退出</p>
+<pre><code>$ setenforce 0 #立即生效
+</code></pre><p>2、开启防火墙tcp 873端口（Rsync默认端口）</p>
+<pre><code>$ vi /etc/sysconfig/iptables #编辑防火墙配置文件
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-A RH-Firewall-1-INPUT -m state –state NEW -m tcp -p tcp –dport 873 -j ACCEPT</div></pre></td></tr></table></figure>
+<p>:wq! #保存，退出</p>
+<pre><code>$ /etc/init.d/iptables restart #最后重启防火墙使配置生效
+</code></pre><p>3、安装Rsync服务端软件</p>
+<p>先检查有无安装rsync和xinetd：</p>
+<pre><code>$ rpm -qa|grep rsync
+</code></pre><p>若无，通过yum方式安装</p>
+<pre><code>$ yum install rsync xinetd 
+
+$ vi /etc/xinetd.d/rsync #编辑配置文件，设置开机启动rsync
+</code></pre><p>disable = no #修改为no</p>
+<p>:wq! #保存退出</p>
+<pre><code>$ /etc/init.d/xinetd start #启动（CentOS中是以xinetd来管理Rsync服务的）
+</code></pre><p>4、创建rsyncd.conf配置文件<br>    $ vi /etc/rsyncd.conf </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line">#日志文件位置，启动rsync后自动产生这个文件，无需提前创建</div><div class="line">log file = /var/log/rsyncd.log</div><div class="line"></div><div class="line">#pid文件的存放位置</div><div class="line">pidfile = /var/run/rsyncd.pid</div><div class="line"></div><div class="line">#支持max connections参数的锁文件</div><div class="line">lock file = /var/run/rsync.lock</div><div class="line"></div><div class="line">#用户认证配置文件，里面保存用户名称和密码，后面会创建这个文件</div><div class="line">secrets file = /etc/rsync.pass</div><div class="line"></div><div class="line">#rsync启动时欢迎信息页面文件位置（文件内容自定义）</div><div class="line">motd file = /etc/rsyncd.Motd</div><div class="line"></div><div class="line">#自定义名称</div><div class="line">[helpfile]</div><div class="line"></div><div class="line">#rsync服务端数据目录路径</div><div class="line">path = /var/www/html/help/</div><div class="line"></div><div class="line">#模块名称与[helpfile]自定义名称相同</div><div class="line">comment = helpfile</div><div class="line"></div><div class="line">#设置rsync运行权限为root</div><div class="line">uid = root</div><div class="line"></div><div class="line">#设置rsync运行权限为root</div><div class="line">gid = root</div><div class="line"></div><div class="line">#默认端口</div><div class="line">port=873</div><div class="line"></div><div class="line">#默认为true，修改为no，增加对目录文件软连接的备份</div><div class="line">use chroot = no</div><div class="line"></div><div class="line">#设置rsync服务端文件为读写权限</div><div class="line">read only = no</div><div class="line"></div><div class="line">#不显示rsync服务端资源列表</div><div class="line">list = no</div><div class="line"></div><div class="line">#最大连接数</div><div class="line">max connections = 200</div><div class="line"></div><div class="line">#设置超时时间</div><div class="line">timeout = 600</div><div class="line"></div><div class="line">#执行数据同步的用户名，可以设置多个，用英文状态下逗号隔开</div><div class="line">auth users = root</div><div class="line"></div><div class="line">#允许进行数据同步的客户端IP地址，可以设置多个，用英文状态下逗号隔开</div><div class="line">hosts allow = 10.0.0.20</div><div class="line"></div><div class="line">#禁止数据同步的客户端IP地址，可以设置多个，用英文状态下逗号隔开</div><div class="line">hosts deny = 192.168.21.254</div></pre></td></tr></table></figure>
+<p>:wq! #保存,退出</p>
+<p>5、创建用户认证文件</p>
+<pre><code>$ vi /etc/rsync.pass #配置文件，添加以下内容
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">root:password #格式，用户名:密码，可以设置多个，每行一个用户名:密码</div></pre></td></tr></table></figure>
+<p>:wq! #保存，退出</p>
+<p>6、设置文件权限</p>
+<pre><code>$ chmod 600 /etc/rsyncd.conf #设置文件所有者读取、写入权限
+
+$ chmod 600 /etc/rsync.pass #设置文件所有者读取、写入权限
+</code></pre><p>7、启动rsync</p>
+<pre><code>$ /etc/init.d/xinetd start #启动
+
+$ service xinetd stop #停止
+
+$ service xinetd restart #重新启动
+</code></pre><h4 id="在源服务器安装Rsync客户端"><a href="#在源服务器安装Rsync客户端" class="headerlink" title="在源服务器安装Rsync客户端"></a>在源服务器安装Rsync客户端</h4><p>在源服务器10.0.0.20上操作</p>
+<p>1、关闭SELINUX</p>
+<pre><code>$ vi /etc/selinux/config #编辑防火墙配置文件
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#SELINUX=enforcing #注释掉</div><div class="line"></div><div class="line">#SELINUXTYPE=targeted #注释掉</div><div class="line"></div><div class="line">SELINUX=disabled #增加</div></pre></td></tr></table></figure>
+<p>:wq! #保存，退出</p>
+<pre><code>$ setenforce 0 #立即生效
+</code></pre><p>2、开启防火墙tcp 873端口（Rsync默认端口，做为客户端的Rsync可以不用开启873端口）</p>
+<pre><code>$ vi /etc/sysconfig/iptables #编辑防火墙配置文件
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-A RH-Firewall-1-INPUT -m state –state NEW -m tcp -p tcp –dport 873 -j ACCEPT</div></pre></td></tr></table></figure>
+<p>:wq! #保存，退出</p>
+<pre><code>$ /etc/init.d/iptables restart #最后重启防火墙使配置生效
+</code></pre><p>3、安装Rsync客户端软件</p>
+<pre><code>$ whereis rsync #查看系统是否已安装rsync,出现下面的提示，说明已经安装
+</code></pre><p>rsync: /usr/bin/rsync /usr/share/man/man1/rsync.1.gz</p>
+<pre><code>$ yum install xinetd #只安装xinetd即可，CentOS中是以xinetd来管理rsync服务的
+$ yum install rsync xinetd #如果默认没有rsync，运行此命令进行安装rsync和xinetd
+$ vi /etc/xinetd.d/rsync #编辑配置文件，设置开机启动rsync
+</code></pre><p>disable = no #修改为no</p>
+<pre><code>$ /etc/init.d/xinetd start #启动（CentOS中是以xinetd来管理rsync服务的）
+</code></pre><p>4、创建认证密码文件</p>
+<pre><code>$ vi /etc/passwd.txt #编辑文件，添加以下内容
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">password #密码，跟10.0.0.11上的root密码要匹配</div></pre></td></tr></table></figure>
+<p>:wq! #保存退出</p>
+<pre><code>$ chmod 600 /etc/passwd.txt #设置文件权限，只设置文件所有者具有读取、写入权限即可
+</code></pre><p>5、测试源服务器10.0.0.20到目标服务器10.0.0.11之间的数据同步</p>
+<pre><code>$ rsync -avH –port=873 –progress –delete /var/www/html/admin.vane.com/admin/UploadFile/apphelp/files root@10.0.0.11::helpfile –password-file=/etc/passwd.txt
+</code></pre><p>运行完成后，在目标服务器10.0.0.11上查看，在/var/www/html/help目录下有和远端文件夹中一样的文件，说明数据同步成功。</p>
+<h3 id="Inotify-tools安装"><a href="#Inotify-tools安装" class="headerlink" title="Inotify-tools安装"></a>Inotify-tools安装</h3><h4 id="安装Inotify-tools工具，实时触发rsync进行同步"><a href="#安装Inotify-tools工具，实时触发rsync进行同步" class="headerlink" title="安装Inotify-tools工具，实时触发rsync进行同步"></a>安装Inotify-tools工具，实时触发rsync进行同步</h4><p>1、查看服务器内核是否支持inotify</p>
+<pre><code>$ ll /proc/sys/fs/inotify #列出文件目录，出现下面的内容，说明服务器内核支持inotify
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">-rw-r–r– 1 root root 0 Jan 14 16:47 max_queued_events</div><div class="line">-rw-r–r– 1 root root 0 Jan 14 16:47 max_user_instances</div><div class="line">-rw-r–r– 1 root root 0 Jan 14 16:47 max_user_watches</div></pre></td></tr></table></figure>
+<p>备注：Linux下支持inotify的内核最小为2.6.13，可以输入命令：uname -a查看内核</p>
+<p>CentOS 5.X 内核为2.6.18，默认已经支持inotify</p>
+<p>2、安装inotify-tools</p>
+<pre><code>$ yum install make gcc gcc-c++ #安装编译工具
+</code></pre><p>下载地址： <a href="http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz" target="_blank" rel="external">inotify-tools</a></p>
+<p>上传inotify-tools-3.14.tar.gz到/usr/local/src目录下</p>
+<pre><code>$ cd /usr/local/src
+$ tar zxvf inotify-tools-3.14.tar.gz #解压
+$ cd inotify-tools-3.14 #进入解压目录
+$ ./configure –prefix=/usr/local/inotify #配置
+$ make #编译
+$ make install #安装
+</code></pre><p>3、设置系统环境变量，添加软连接</p>
+<pre><code>$ echo “PATH=/usr/local/inotify/bin:$PATH” &gt;&gt;/etc/profile.d/inotify.sh
+$ source /etc/profile.d/inotify.sh #使设置立即生效
+$ echo “/usr/local/inotify/lib” &gt;/etc/ld.so.conf.d/inotify.conf
+$ ln -s /usr/local/inotify/include /usr/include/inotify
+</code></pre><p>4、修改inotify默认参数（inotify默认内核参数值太小）</p>
+<p>查看系统默认参数值</p>
+<pre><code>$ sysctl -a | grep max_queued_events
+</code></pre><p>结果是：fs.inotify.max_queued_events = 16384</p>
+<pre><code>$ sysctl -a | grep max_user_watches
+</code></pre><p>结果是：fs.inotify.max_user_watches = 8192</p>
+<pre><code>$ sysctl -a | grep max_user_instances
+</code></pre><p>结果是：fs.inotify.max_user_instances = 128</p>
+<pre><code>$ vi /etc/sysctl.conf #添加以下代码
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">fs.inotify.max_queued_events=99999999</div><div class="line"></div><div class="line">fs.inotify.max_user_watches=99999999</div><div class="line"></div><div class="line">fs.inotify.max_user_instances=65535</div></pre></td></tr></table></figure>
+<p>:wq! #保存退出</p>
+<h4 id="参数说明："><a href="#参数说明：" class="headerlink" title="参数说明："></a>参数说明：</h4><p>max_queued_events：</p>
+<p>inotify队列最大长度，如果值太小，会出现”<strong> Event Queue Overflow </strong>”错误，导致监控文件不准确</p>
+<p>max_user_watches：</p>
+<p>要同步的文件包含多少目录，可以用：<br>    $ find /var/www/html/admin.vane.com/admin/UploadFile/apphelp/files -type d | wc -l<br>统计，必须保证max_user_watches值大于统计结果（这里/var/www/html/admin.vane.com/admin/UploadFile/apphelp/files为同步文件目录）</p>
+<p>max_user_instances：</p>
+<p>每个用户创建inotify实例最大值<br>5、创建脚本，实时触发rsync进行同步</p>
+<pre><code>$ vi /usr/local/inotify/rsync.sh #编辑，添加以下代码
+</code></pre><pre><code>#!/bin/sh
+
+srcdir=/var/www/html/admin.vane.com/admin/UploadFile/apphelp/files
+
+dstdir=/var/www/html/help
+
+rsyncuser=root
+
+rsyncpassdir=/etc/passwd.txt
+
+#若有多个ip，用空格隔开
+dstip=”10.0.0.11″
+
+for ip in $dstip
+
+do
+
+rsync -avH –port=873 –progress –delete $srcdir $rsyncuser@$ip::$dstdir –password-file=$rsyncpassdir
+
+done
+
+/usr/local/inotify/bin/inotifywait -mrq –timefmt ‘%d/%m/%y %H:%M’ –format ‘%T %w%f%e’ -e close_write,modify,delete,create,attrib,move $srcdir | while read file
+
+do
+
+for ip in $dstip
+
+do
+
+rsync -avH –port=873 –progress –delete $srcdir $rsyncuser@$ip::$dstdir –password-file=$rsyncpassdir
+
+echo ” ${file} was rsynced” &gt;&gt; /tmp/rsync.log 2&gt;&amp;1
+
+done
+
+done
+</code></pre><pre><code>$ chmod +x /usr/local/inotify/rsync.sh #添加脚本执行权限
+</code></pre><p>脚本参数说明：</p>
+<p>srcdir= #源服务器同步目录</p>
+<p>dstdir= #目标服务器rsync同步目录模块名称</p>
+<p>rsyncuser= #目标服务器rsync同步用户名</p>
+<p>rsyncpassdir=/etc/passwd.txt #目标服务器rsync同步用户的密码在源服务器的存放路径</p>
+<p>dstip=”10.0.0.11″ #目标服务器ip，多个ip用空格分开</p>
+<p>/tmp/rsync.log #脚本运行日志记录</p>
+<p>6、设置脚本开机自动执行</p>
+<pre><code>$ vi /etc/rc.d/rc.local #编辑，在最后添加一行
+$ sh /usr/local/inotify/rsync.sh &amp; ＃设置开机自动在后台运行脚本
+</code></pre><p>:wq! #保存退出</p>
+<p>7、测试inotify实时触发rsync同步脚本是否正常运行</p>
+<p>在源断服务器上启动进程：</p>
+<pre><code>$ sh /usr/local/inotify/rsync.sh &amp;
+</code></pre><p>查看文件同步效果，如果以上测试都通过，说明inotify实时触发rsync同步脚本运行正常。</p>
+<p>至此，Linux下Rsync+Inotify-tools实现数据实时同步完成。</p>
+<h3 id="扩展阅读"><a href="#扩展阅读" class="headerlink" title="扩展阅读"></a>扩展阅读</h3><p>inotify参数</p>
+<p>-m 是保持一直监听</p>
+<p>-r 是递归查看目录</p>
+<p>-q 是打印出事件</p>
+<p>-e create,move,delete,modify,attrib 是指 “监听 创建 移动 删除 写入 权限” 事件</p>
+<p>rsync参数</p>
+<p>-v, –verbose 详细模式输出</p>
+<p>-q, –quiet 精简输出模式</p>
+<p>-c, –checksum 打开校验开关，强制对文件传输进行校验</p>
+<p>-a, –archive 归档模式，表示以递归方式传输文件，并保持所有文件属性，等于-rlptgoD</p>
+<p>-r, –recursive 对子目录以递归模式处理</p>
+<p>-R, –relative 使用相对路径信息</p>
+<p>-b, –backup 创建备份，也就是对于目的已经存在有同样的文件名时，将老的文件重新命名为~filename。可以使用–suffix选项来指定不同的备份文件前缀。</p>
+<p>–backup-dir 将备份文件(如~filename)存放在在目录下。</p>
+<p>-suffix=SUFFIX 定义备份文件前缀</p>
+<p>-u, –update 仅仅进行更新，也就是跳过所有已经存在于DST，并且文件时间晚于要备份的文件。(不覆盖更新的文件)</p>
+<p>-l, –links 保留软链结</p>
+<p>-L, –copy-links 想对待常规文件一样处理软链结</p>
+<p>–copy-unsafe-links 仅仅拷贝指向SRC路径目录树以外的链结</p>
+<p>–safe-links 忽略指向SRC路径目录树以外的链结</p>
+<p>-H, –hard-links 保留硬链结</p>
+<p>-p, –perms 保持文件权限</p>
+<p>-o, –owner 保持文件属主信息</p>
+<p>-g, –group 保持文件属组信息</p>
+<p>-D, –devices 保持设备文件信息</p>
+<p>-t, –times 保持文件时间信息</p>
+<p>-S, –sparse 对稀疏文件进行特殊处理以节省DST的空间</p>
+<p>-n, –dry-run现实哪些文件将被传输</p>
+<p>-W, –whole-file 拷贝文件，不进行增量检测</p>
+<p>-x, –one-file-system 不要跨越文件系统边界</p>
+<p>-B, –block-size=SIZE 检验算法使用的块尺寸，默认是700字节</p>
+<p>-e, –rsh=COMMAND 指定使用rsh、ssh方式进行数据同步</p>
+<p>–rsync-path=PATH 指定远程服务器上的rsync命令所在路径信息</p>
+<p>-C, –cvs-exclude 使用和CVS一样的方法自动忽略文件，用来排除那些不希望传输的文件</p>
+<p>–existing 仅仅更新那些已经存在于DST的文件，而不备份那些新创建的文件</p>
+<p>–delete 删除那些DST中SRC没有的文件</p>
+<p>–delete-excluded 同样删除接收端那些被该选项指定排除的文件</p>
+<p>–delete-after 传输结束以后再删除</p>
+<p>–ignore-errors 及时出现IO错误也进行删除</p>
+<p>–max-delete=NUM 最多删除NUM个文件</p>
+<p>–partial 保留那些因故没有完全传输的文件，以是加快随后的再次传输</p>
+<p>–force 强制删除目录，即使不为空</p>
+<p>–numeric-ids 不将数字的用户和组ID匹配为用户名和组名</p>
+<p>–timeout=TIME IP超时时间，单位为秒</p>
+<p>-I, –ignore-times 不跳过那些有同样的时间和长度的文件</p>
+<p>–size-only 当决定是否要备份文件时，仅仅察看文件大小而不考虑文件时间</p>
+<p>–modify-window=NUM 决定文件是否时间相同时使用的时间戳窗口，默认为0</p>
+<p>-T –temp-dir=DIR 在DIR中创建临时文件</p>
+<p>–compare-dest=DIR 同样比较DIR中的文件来决定是否需要备份</p>
+<p>-P 等同于 –partial</p>
+<p>–progress 显示备份过程</p>
+<p>-z, –compress 对备份的文件在传输时进行压缩处理</p>
+<p>–exclude=PATTERN 指定排除不需要传输的文件模式</p>
+<p>–include=PATTERN 指定不排除而需要传输的文件模式</p>
+<p>–exclude-from=FILE 排除FILE中指定模式的文件</p>
+<p>–include-from=FILE 不排除FILE指定模式匹配的文件</p>
+<p>–version 打印版本信息</p>
+<p>–address 绑定到特定的地址</p>
+<p>–config=FILE 指定其他的配置文件，不使用默认的rsyncd.conf文件</p>
+<p>–port=PORT 指定其他的rsync服务端口</p>
+<p>–blocking-io 对远程shell使用阻塞IO</p>
+<p>-stats 给出某些文件的传输状态</p>
+<p>–progress 在传输时现实传输过程</p>
+<p>–log-format=formAT 指定日志文件格式</p>
+<p>–password-file=FILE 从FILE中得到密码</p>
+<p>–bwlimit=KBPS 限制I/O带宽，KBytes per second</p>
+<p>-h, –help 显示帮助信息</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2012/06/12/fdfs-http/" rel="prev" title="分布式文件系统FastDFS之HTTP服务详解">
+                分布式文件系统FastDFS之HTTP服务详解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#操作步骤"><span class="nav-number">1.</span> <span class="nav-text">操作步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#目标服务器安装Rsync服务端"><span class="nav-number">1.1.</span> <span class="nav-text">目标服务器安装Rsync服务端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在源服务器安装Rsync客户端"><span class="nav-number">1.2.</span> <span class="nav-text">在源服务器安装Rsync客户端</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Inotify-tools安装"><span class="nav-number">2.</span> <span class="nav-text">Inotify-tools安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#安装Inotify-tools工具，实时触发rsync进行同步"><span class="nav-number">2.1.</span> <span class="nav-text">安装Inotify-tools工具，实时触发rsync进行同步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参数说明："><span class="nav-number">2.2.</span> <span class="nav-text">参数说明：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩展阅读"><span class="nav-number">3.</span> <span class="nav-text">扩展阅读</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
