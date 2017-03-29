@@ -1,0 +1,736 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="运维," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="记得刚工作接触linux的时候，首先要学的就是如何编辑文件，那么vim编辑工具就来了。
+vi file文件名，打开文件。如无该文件，则创建该文件。:q — 离开vi编辑器a or i –进入编辑模式:w –存档:wq –存档并退出vi
+vi三种模式1)command mode 最下方有提示信息，或者是空白的。可移动光标、删除、复制、剪贴2)insert mode 按A键可进入insert mode">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vi编辑器使用介绍">
+<meta property="og:url" content="https://fangdaidai.github.io/2012/10/29/vi/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="记得刚工作接触linux的时候，首先要学的就是如何编辑文件，那么vim编辑工具就来了。
+vi file文件名，打开文件。如无该文件，则创建该文件。:q — 离开vi编辑器a or i –进入编辑模式:w –存档:wq –存档并退出vi
+vi三种模式1)command mode 最下方有提示信息，或者是空白的。可移动光标、删除、复制、剪贴2)insert mode 按A键可进入insert mode">
+<meta property="og:updated_time" content="2017-03-28T07:12:09.880Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="vi编辑器使用介绍">
+<meta name="twitter:description" content="记得刚工作接触linux的时候，首先要学的就是如何编辑文件，那么vim编辑工具就来了。
+vi file文件名，打开文件。如无该文件，则创建该文件。:q — 离开vi编辑器a or i –进入编辑模式:w –存档:wq –存档并退出vi
+vi三种模式1)command mode 最下方有提示信息，或者是空白的。可移动光标、删除、复制、剪贴2)insert mode 按A键可进入insert mode">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://fangdaidai.github.io/2012/10/29/vi/"/>
+
+
+
+
+
+  <title> vi编辑器使用介绍 | 矜能负才.Zero </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矜能负才.Zero</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/10/29/vi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                vi编辑器使用介绍
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-10-29T23:47:44+08:00">
+                2012/10-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>记得刚工作接触linux的时候，首先要学的就是如何编辑文件，那么vim编辑工具就来了。</p>
+<h4 id="vi-file文件名，打开文件。如无该文件，则创建该文件。"><a href="#vi-file文件名，打开文件。如无该文件，则创建该文件。" class="headerlink" title="vi file文件名，打开文件。如无该文件，则创建该文件。"></a>vi file文件名，打开文件。如无该文件，则创建该文件。</h4><p>:q — 离开vi编辑器<br>a or i –进入编辑模式<br>:w –存档<br>:wq –存档并退出vi</p>
+<h4 id="vi三种模式"><a href="#vi三种模式" class="headerlink" title="vi三种模式"></a>vi三种模式</h4><p>1)command mode 最下方有提示信息，或者是空白的。可移动光标、删除、复制、剪贴<br>2)insert mode 按A键可进入insert mode，退出到command，按ESC键。<br>3)extend mode 从command mode按冒号(:)进入.离开、存档、搜索关键词时用该模式。</p>
+<h4 id="command-mode下，光标移动的控制键，"><a href="#command-mode下，光标移动的控制键，" class="headerlink" title="command mode下，光标移动的控制键，"></a>command mode下，光标移动的控制键，</h4><p>h 左<br>j 下<br>k 上<br>l 右（方向键也可）<br>w 到前一个单词<br>b 回退一个单词。<br>( 往下一个句子<br>) 回退一个句子<br>{ 往下一个段落<br>} 回退一个段落</p>
+<h4 id="进入insert模式"><a href="#进入insert模式" class="headerlink" title="进入insert模式"></a>进入insert模式</h4><p>a append after the cursor(光标)<br>i insert before the cursor<br>————————————————<br>A append to end of line<br>I insert beginning of line<br>————————————————<br>o open a line below(在光标所在行的下面新增一行空白)<br>O open a line above(在光标所在行的上面新增一行空白)</p>
+<h4 id="command-mode下的change、delete-and-Yank（copy）："><a href="#command-mode下的change、delete-and-Yank（copy）：" class="headerlink" title="command mode下的change、delete and Yank（copy）："></a>command mode下的change、delete and Yank（copy）：</h4><p>change delete Yank(copy)<br>—————————————————————-<br>Line cc dd yy<br>Letter cl dl yl<br>Word cw dw yw<br>—————————————————————-</p>
+<h4 id="p-P-粘贴命令。用来粘贴以上changed、deleted、copied的内容。"><a href="#p-P-粘贴命令。用来粘贴以上changed、deleted、copied的内容。" class="headerlink" title="p / P 粘贴命令。用来粘贴以上changed、deleted、copied的内容。"></a>p / P 粘贴命令。用来粘贴以上changed、deleted、copied的内容。</h4><p>1)For line oriented data:<br>p(小写) 粘贴数据到当前行的下面<br>P(大写) 粘贴数据到当前行的上面<br>2)For charater oriented data:<br>p(小写) 粘贴数据到当前光标的后面<br>P(大写) 粘贴数据到当前光标的前面</p>
+<h4 id="Undoing-Changes：command-mode"><a href="#Undoing-Changes：command-mode" class="headerlink" title="Undoing Changes：command mode"></a>Undoing Changes：command mode</h4><p>u undo most recent change</p>
+<p><ctrl-r> redo last “undone” change<br>U undo all changes to the current line</ctrl-r></p>
+<h4 id="Searching-for-Text：command-mode"><a href="#Searching-for-Text：command-mode" class="headerlink" title="Searching for Text：command mode"></a>Searching for Text：command mode</h4><p>/text search downwards for “text”<br>?text search upwards for “text”<br>——————————————–<br>n continue search in the same direction<br>N continue search in the opposite direction</p>
+<h4 id="command-mode-小技巧"><a href="#command-mode-小技巧" class="headerlink" title="command mode 小技巧"></a>command mode 小技巧</h4><p>dtC 从光标处到C之间的字符删除<br>rC 用C取代光标所在的字符<br>x 删除光标所在的字符<br>5dd 删除5行<br>5yy 复制5行<br>5x 删除5个字符<br>R 逐个字符的替代，取消按&lt;——，直到按下ESC退出<br>——————-033-08 00：35：04————</p>
+<h4 id="存档和退出："><a href="#存档和退出：" class="headerlink" title="存档和退出："></a>存档和退出：</h4><p>:w saving<br>:q quit<br>:wq save and quit<br>! 强制保存/退出，如：:w!强制存档，:q!强制退出，:wq!强制存档并退<br>出。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/运维/" rel="tag"># 运维</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2012/10/08/puppet-order/" rel="next" title="puppet命令小结">
+                <i class="fa fa-chevron-left"></i> puppet命令小结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2012/11/02/lvm-de/" rel="prev" title="lvm缩容">
+                lvm缩容 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#vi-file文件名，打开文件。如无该文件，则创建该文件。"><span class="nav-number">1.</span> <span class="nav-text">vi file文件名，打开文件。如无该文件，则创建该文件。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vi三种模式"><span class="nav-number">2.</span> <span class="nav-text">vi三种模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#command-mode下，光标移动的控制键，"><span class="nav-number">3.</span> <span class="nav-text">command mode下，光标移动的控制键，</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进入insert模式"><span class="nav-number">4.</span> <span class="nav-text">进入insert模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#command-mode下的change、delete-and-Yank（copy）："><span class="nav-number">5.</span> <span class="nav-text">command mode下的change、delete and Yank（copy）：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#p-P-粘贴命令。用来粘贴以上changed、deleted、copied的内容。"><span class="nav-number">6.</span> <span class="nav-text">p / P 粘贴命令。用来粘贴以上changed、deleted、copied的内容。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Undoing-Changes：command-mode"><span class="nav-number">7.</span> <span class="nav-text">Undoing Changes：command mode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Searching-for-Text：command-mode"><span class="nav-number">8.</span> <span class="nav-text">Searching for Text：command mode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#command-mode-小技巧"><span class="nav-number">9.</span> <span class="nav-text">command mode 小技巧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#存档和退出："><span class="nav-number">10.</span> <span class="nav-text">存档和退出：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

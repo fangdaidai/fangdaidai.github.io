@@ -1,0 +1,816 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="linux,运维," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Redhat Linux通常由于没有注册，导致yum程序无法使用，需要将其替换为centos的yum程序。
+准备下载Yum的安装包,由于体系结构的不同和包的更新，因此目录和文件名的版本号可能需要调整以下。目前是网站提供最新的rpm版本
+$ cd /ISO/yum_64_rpm
+$ wget http://centos.ustc.edu.cn/centos/5/os/x86_64/CentOS/yu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="yum源配置">
+<meta property="og:url" content="https://fangdaidai.github.io/2013/02/09/yum-repo/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="Redhat Linux通常由于没有注册，导致yum程序无法使用，需要将其替换为centos的yum程序。
+准备下载Yum的安装包,由于体系结构的不同和包的更新，因此目录和文件名的版本号可能需要调整以下。目前是网站提供最新的rpm版本
+$ cd /ISO/yum_64_rpm
+$ wget http://centos.ustc.edu.cn/centos/5/os/x86_64/CentOS/yu">
+<meta property="og:updated_time" content="2017-03-28T09:41:03.203Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="yum源配置">
+<meta name="twitter:description" content="Redhat Linux通常由于没有注册，导致yum程序无法使用，需要将其替换为centos的yum程序。
+准备下载Yum的安装包,由于体系结构的不同和包的更新，因此目录和文件名的版本号可能需要调整以下。目前是网站提供最新的rpm版本
+$ cd /ISO/yum_64_rpm
+$ wget http://centos.ustc.edu.cn/centos/5/os/x86_64/CentOS/yu">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://fangdaidai.github.io/2013/02/09/yum-repo/"/>
+
+
+
+
+
+  <title> yum源配置 | 矜能负才.Zero </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矜能负才.Zero</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2013/02/09/yum-repo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                yum源配置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2013-02-09T23:47:44+08:00">
+                2013/02-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Redhat Linux通常由于没有注册，导致yum程序无法使用，需要将其替换为centos的yum程序。</p>
+<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>下载Yum的安装包,由于体系结构的不同和包的更新，因此目录和文件名的版本号可能需要调整以下。目前是网站提供最新的rpm版本</p>
+<pre><code>$ cd /ISO/yum_64_rpm
+$ wget http://centos.ustc.edu.cn/centos/5/os/x86_64/CentOS/yum-3.2.22-40.el5.centos.noarch.rpm
+$ wget http://centos.ustc.edu.cn/centos/5/os/x86_64/CentOS/yum-fastestmirror-1.1.16-21.el5.centos.noarch.rpm
+$ wget http://centos.ustc.edu.cn/centos/5/os/x86_64/CentOS/yum-metadata-parser-1.1.2-4.el5.x86_64.rpm
+</code></pre><p>查出当前的yum程序，进行卸载</p>
+<pre><code>$ rpm -qa|grep yum
+
+$ rpm -qa|grep yum
+</code></pre><blockquote>
+<p>yum-metadata-parser-1.1.2-3.el5<br>yum-updatesd-0.9-2.el5<br>yum-rhn-plugin-0.5.4-15.el5<br>yum-3.2.22-26.el5<br>yum-security-1.1.16-13.el5</p>
+</blockquote>
+<p>卸载原有的yum包 –nodeps忽略包依赖</p>
+<pre><code>$ rpm -e yum-3.2.22-26.el5 –nodeps
+$ rpm -e yum-updatesd-0.9-2.el5 –nodeps
+$ rpm -e yum-security-1.1.16-13.el5 –nodeps
+$ rpm -e yum-metadata-parser-1.1.2-3.el5 –nodeps
+$ rpm -e yum-rhn-plugin-0.5.4-15.el5 –nodeps
+</code></pre><p>安装下载的rpm包</p>
+<pre><code>$ cd /ISO/yum_64_rpm
+$ rpm -ivh yum-3.2.22-40.el5.centos.noarch.rpm
+$ rpm -ivh yum-fastestmirror-1.1.16-21.el5.centos.noarch.rpm
+$ rpm -ivh yum-metadata-parser-1.1.2-4.el5.x86_64.rpm
+</code></pre><p>将本地光盘配置为本地源</p>
+<pre><code>$ /etc/yum.repos.d
+$ vi base.repo
+</code></pre><p>添加如下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[rhel-base]</div><div class="line">name=RHEL5.5 base</div><div class="line">baseurl=file:///ISO/RHEL/5.5_64/Server</div><div class="line">enabled=1</div><div class="line">gpgcheck=0</div><div class="line">priority=1</div></pre></td></tr></table></figure>
+<p>保存即可。</p>
+<h3 id="添加Centos的源"><a href="#添加Centos的源" class="headerlink" title="添加Centos的源"></a>添加Centos的源</h3><pre><code>$ /etc/yum.repos.d
+$ vi rhel-debuginfo.repo
+</code></pre><p>添加如下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">[base]</div><div class="line">name=Red Hat Enterprise Linux $releasever -Base</div><div class="line">baseurl=http://mirrors.sohu.com/centos/5.5/os/$basearch/</div><div class="line">gpgcheck=1</div><div class="line"></div><div class="line">[update]</div><div class="line">name=Red Hat Enterprise Linux $releasever -Updates</div><div class="line">baseurl=http://mirrors.sohu.com/centos/5.5/updates/$basearch/</div><div class="line">gpgcheck=1</div><div class="line"></div><div class="line">[extras]</div><div class="line">name=Red Hat Enterprise Linux $releasever -Extras</div><div class="line">baseurl=http://mirrors.sohu.com/centos/5.5/extras/$basearch/</div><div class="line">gpgcheck=1</div><div class="line"></div><div class="line">[addons]</div><div class="line">name=Red Hat Enterprise Linux $releasever -Addons</div><div class="line">baseurl=http://mirrors.sohu.com/centos/5.5/addons/$basearch/</div><div class="line">gpgcheck=1</div></pre></td></tr></table></figure>
+<p>保存即可。</p>
+<h3 id="安装制作yum仓库的软件包和yum-priorities管理包"><a href="#安装制作yum仓库的软件包和yum-priorities管理包" class="headerlink" title="安装制作yum仓库的软件包和yum-priorities管理包"></a>安装制作yum仓库的软件包和yum-priorities管理包</h3><pre><code>$ yum install createrepo yum-priorities
+$ rpm -qa | egrep “createrepo|yum-priorities”
+</code></pre><blockquote>
+<p>createrepo-0.4.11-3.el5<br>yum-priorities-1.1.16-21.el5.centos</p>
+</blockquote>
+<h3 id="下载特定版本的puppet，做成本地源"><a href="#下载特定版本的puppet，做成本地源" class="headerlink" title="下载特定版本的puppet，做成本地源"></a>下载特定版本的puppet，做成本地源</h3><pre><code>$ wget http://yum.puppetlabs.com/el/55/products/x86_64/puppet-3.7.3-1.el5.noarch.rpm
+$ wget http://yum.puppetlabs.com/el/55/products/x86_64/puppet-server-3.7.3-1.el5.noarch.rpm
+$ wget http://yum.puppetlabs.com/el/55/products/x86_64/facter-2.3.0-1.el5.x86_64.rpm
+$ wget http://yum.puppetlabs.com/el/55/products/x86_64/mcollective-common-2.7.0-1.el5.noarch.rpm
+$ wget http://yum.puppetlabs.com/el/55/products/x86_64/mcollective-client-2.7.0-1.el5.noarch.rpm
+$ wget http://yum.puppetlabs.com/el/55/products/x86_64/mcollective-2.7.0-1.el5.noarch.rpm
+$ wget http://yum.puppetlabs.com/el/55/products/x86_64/puppet-dashboard-1.2.23-1.el5.noarch.rpm
+$ wget http://yum.puppetlabs.com/el/55/products/x86_64/mcollective-filemgr-common-1.0.2-1.el5.noarch.rpm
+
+$  ll
+</code></pre><blockquote>
+<p>total 7176<br>-rw-r–r– 1 root root 99651 Oct 31 07:55 facter-2.3.0-1.el5.x86_64.rpm<br>-rw-r–r– 1 root root 10982 Dec 3 01:45 mcollective-2.7.0-1.el5.noarch.rpm<br>-rw-r–r– 1 root root 26807 Dec 3 01:45 mcollective-client-2.7.0-1.el5.noarch.rpm<br>-rw-r–r– 1 root root 492745 Dec 3 01:45 mcollective-common-2.7.0-1.el5.noarch.rpm<br>-rw-r–r– 1 root root 3938 Jun 24 01:20 mcollective-filemgr-common-1.0.2-1.el5.noarch.rpm<br>-rw-r–r– 1 root root 1742203 Nov 5 01:43 puppet-3.7.3-1.el5.noarch.rpm<br>-rw-r–r– 1 root root 4875976 Nov 22 2013 puppet-dashboard-1.2.23-1.el5.noarch.rpm<br>-rw-r–r– 1 root root 24571 Nov 5 01:43 puppet-server-3.7.3-1.el5.noarch.rpm</p>
+</blockquote>
+<pre><code>$ cd /ISO/puppet
+</code></pre><h3 id="createrepo-制作本地源"><a href="#createrepo-制作本地源" class="headerlink" title="createrepo . #制作本地源"></a>createrepo . #制作本地源</h3><pre><code>$  createrepo .
+</code></pre><blockquote>
+<p>8/8 – mcollective-2.7.0-1.el5.noarch.rpm<br>Saving Primary metadata<br>Saving file lists metadata<br>Saving other metadata</p>
+</blockquote>
+<pre><code>$  ll
+</code></pre><blockquote>
+<p>total 7184<br>-rw-r–r– 1 root root 99651 Oct 31 07:55 facter-2.3.0-1.el5.x86_64.rpm<br>-rw-r–r– 1 root root 10982 Dec 3 01:45 mcollective-2.7.0-1.el5.noarch.rpm<br>-rw-r–r– 1 root root 26807 Dec 3 01:45 mcollective-client-2.7.0-1.el5.noarch.rpm<br>-rw-r–r– 1 root root 492745 Dec 3 01:45 mcollective-common-2.7.0-1.el5.noarch.rpm<br>-rw-r–r– 1 root root 3938 Jun 24 01:20 mcollective-filemgr-common-1.0.2-1.el5.noarch.rpm<br>-rw-r–r– 1 root root 1742203 Nov 5 01:43 puppet-3.7.3-1.el5.noarch.rpm<br>-rw-r–r– 1 root root 4875976 Nov 22 2013 puppet-dashboard-1.2.23-1.el5.noarch.rpm<br>-rw-r–r– 1 root root 24571 Nov 5 01:43 puppet-server-3.7.3-1.el5.noarch.rpm<br>drwxr-xr-x 2 root root 4096 Dec 17 14:37 repodata</p>
+</blockquote>
+<h3 id="编写puppet的repo文件"><a href="#编写puppet的repo文件" class="headerlink" title="编写puppet的repo文件"></a>编写puppet的repo文件</h3><pre><code>$  pwd
+</code></pre><blockquote>
+<p>/etc/yum.repos.d<br>    $  cat puppet.repo</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[puppet]</div><div class="line">name=puppet for rhel5.7</div><div class="line">baseurl=file:///ISO/puppet</div><div class="line">enabled=1</div><div class="line">gpgcheck=0</div><div class="line">priority=2 #设置优先级为本地光盘源之后</div></pre></td></tr></table></figure>
+<h3 id="安装官方puppetlabs源"><a href="#安装官方puppetlabs源" class="headerlink" title="安装官方puppetlabs源"></a>安装官方puppetlabs源</h3><pre><code>$  wget http://yum.puppetlabs.com/el/55/products/x86_64/puppetlabs-release-5-5.noarch.rpm
+</code></pre><blockquote>
+<p>–2014-12-17 14:42:09– <a href="http://yum.puppetlabs.com/el/55/products/x86_64/puppetlabs-release-5-5.noarch.rpm" target="_blank" rel="external">http://yum.puppetlabs.com/el/55/products/x86_64/puppetlabs-release-5-5.noarch.rpm</a><br>Resolving yum.puppetlabs.com… 198.58.114.168, 2600:3c00::f03c:91ff:fe69:6bf0<br>Connecting to yum.puppetlabs.com|198.58.114.168|:80… connected.<br>HTTP request sent, awaiting response… 200 OK<br>Length: 5429 (5.3K) [application/x-redhat-package-manager]<br>Saving to: `puppetlabs-release-5-5.noarch.rpm’</p>
+<p>100%[================================================================================&gt;] 5,429 –.-K/s in 0.001s</p>
+<p>2014-12-17 14:42:09 (6.69 MB/s) – `puppetlabs-release-5-5.noarch.rpm’ saved [5429/5429]</p>
+</blockquote>
+<p>###安装rpm包</p>
+<pre><code>$  rpm -ivh puppetlabs-release-5-5.noarch.rpm
+</code></pre><blockquote>
+<p>warning: puppetlabs-release-5-5.noarch.rpm: Header V3 RSA/SHA1 signature: NOKEY, key ID 4bd6ec30<br>Preparing… ########################################### [100%]<br>1:puppetlabs-release ########################################### [100%]</p>
+</blockquote>
+<p>这样会在/etc/yum.repos.d下面增加一个puppetlabs.repo文件<br>    $  pwd</p>
+<blockquote>
+<p>/etc/yum.repos.d<br>    $  ll<br>total 48<br>-rw-r–r– 1 root root 209 Dec 17 12:57 base.repo<br>-rw-r–r– 1 root root 943 Dec 17 12:51 CentOS-Base.repo<br>-rw-r–r– 1 root root 1262 Jul 6 2012 puppetlabs.repo<br>-rw-r–r– 1 root root 93 Dec 17 14:38 puppet.repo<br>-rw-r–r– 1 root root 521 Dec 17 12:49 rhel-debuginfo.repo<br>-rw-r–r– 1 root root 561 Mar 10 2010 rhel-debuginfo.repo.back20141217</p>
+<p>###修改puppetlabs源优先级</p>
+</blockquote>
+<pre><code>$  cat puppetlabs.repo
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">[puppetlabs-products]</div><div class="line">name=Puppet Labs Products El 5 – $basearch</div><div class="line">baseurl=http://yum.puppetlabs.com/el/5/products/$basearch</div><div class="line">gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs</div><div class="line">enabled=1</div><div class="line">gpgcheck=1</div><div class="line">priority=3 #设置优先级最低</div><div class="line"></div><div class="line">[puppetlabs-deps]</div><div class="line">name=Puppet Labs Dependencies El 5 – $basearch</div><div class="line">baseurl=http://yum.puppetlabs.com/el/5/dependencies/$basearch</div><div class="line">gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs</div><div class="line">enabled=1</div><div class="line">gpgcheck=1</div><div class="line">priority=3 #设置优先级最低</div><div class="line"></div><div class="line">[puppetlabs-devel]</div><div class="line">name=Puppet Labs Devel El 5 – $basearch</div><div class="line">baseurl=http://yum.puppetlabs.com/el/5/devel/$basearch</div><div class="line">gpgkey=file:///yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs</div><div class="line">enabled=0</div><div class="line">gpgcheck=1</div><div class="line"></div><div class="line">[puppetlabs-products-source]</div><div class="line">name=Puppet Labs Products El 5 – $basearch – Source</div><div class="line">baseurl=http://yum.puppetlabs.com/el/5/products/SRPMS</div><div class="line">gpgkey=file:///yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs</div><div class="line">failovermethod=priority</div><div class="line">enabled=0</div><div class="line">gpgcheck=1</div><div class="line"></div><div class="line">[puppetlabs-deps-source]</div><div class="line">name=Puppet Labs Source Dependencies El 5 – $basearch – Source</div><div class="line">baseurl=http://yum.puppetlabs.com/el/5/dependencies/SRPMS</div><div class="line">gpgkey=file:///yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs</div><div class="line">enabled=0</div><div class="line">gpgcheck=1</div><div class="line"></div><div class="line">[puppetlabs-devel-source]</div><div class="line">name=Puppet Labs Devel El 5 – $basearch – Source</div><div class="line">baseurl=http://yum.puppetlabs.com/el/5/devel/SRPMS</div><div class="line">gpgkey=file:///yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs</div><div class="line">enabled=0</div><div class="line">gpgcheck=1</div></pre></td></tr></table></figure>
+<p>###修改yum保存下载的安装包为本地缓存</p>
+<pre><code>$  vi yum.conf
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">[main]</div><div class="line">cachedir=/var/cache/yum</div><div class="line">keepcache=1</div><div class="line">debuglevel=2 #设置保存下载的软件缓存</div><div class="line">logfile=/var/log/yum.log</div><div class="line">distroverpkg=redhat-release</div><div class="line">tolerant=1</div><div class="line">exactarch=1</div><div class="line">obsoletes=1</div><div class="line">gpgcheck=1</div><div class="line">plugins=1</div><div class="line">bugtracker_url=http://bugs.centos.org/yum5bug</div><div class="line"></div><div class="line"># Note: yum-RHN-plugin doesn’t honor this.</div><div class="line">metadata_expire=1h</div><div class="line"></div><div class="line">installonly_limit = 5</div><div class="line"></div><div class="line"># PUT YOUR REPOS HERE OR IN separate files named file.repo</div><div class="line"># in /etc/yum.repos.d</div></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/运维/" rel="tag"># 运维</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2013/02/09/oracle-view/" rel="next" title="oracle常用动态性能视图">
+                <i class="fa fa-chevron-left"></i> oracle常用动态性能视图
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2013/02/12/yum-installpuppet/" rel="prev" title="yum源安装完成后yum安装puppet">
+                yum源安装完成后yum安装puppet <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#准备"><span class="nav-number">1.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加Centos的源"><span class="nav-number">2.</span> <span class="nav-text">添加Centos的源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装制作yum仓库的软件包和yum-priorities管理包"><span class="nav-number">3.</span> <span class="nav-text">安装制作yum仓库的软件包和yum-priorities管理包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#下载特定版本的puppet，做成本地源"><span class="nav-number">4.</span> <span class="nav-text">下载特定版本的puppet，做成本地源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#createrepo-制作本地源"><span class="nav-number">5.</span> <span class="nav-text">createrepo . #制作本地源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编写puppet的repo文件"><span class="nav-number">6.</span> <span class="nav-text">编写puppet的repo文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装官方puppetlabs源"><span class="nav-number">7.</span> <span class="nav-text">安装官方puppetlabs源</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

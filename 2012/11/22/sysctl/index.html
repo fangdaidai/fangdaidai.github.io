@@ -1,0 +1,733 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="运维," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="由于Linux的内核参数信息都存在内存中，因此可以通过命令直接修改，并且修改后直接生效，这个只是引进变量的一种方法。但是，当系统重新启动后，原来设置的参数值就会丢失，而系统每次启动时都会自动去/etc/sysctl.conf文件中读取内核参数，因此将内核的参数配置写入这个文件中，永久性的一个方法。
+配置方法首先打开/etc/sysctl.conf文件，查看如下两行的设置值，这里是：
+123456#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux内核参数小解">
+<meta property="og:url" content="https://fangdaidai.github.io/2012/11/22/sysctl/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="由于Linux的内核参数信息都存在内存中，因此可以通过命令直接修改，并且修改后直接生效，这个只是引进变量的一种方法。但是，当系统重新启动后，原来设置的参数值就会丢失，而系统每次启动时都会自动去/etc/sysctl.conf文件中读取内核参数，因此将内核的参数配置写入这个文件中，永久性的一个方法。
+配置方法首先打开/etc/sysctl.conf文件，查看如下两行的设置值，这里是：
+123456#">
+<meta property="og:updated_time" content="2017-03-28T07:37:03.715Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux内核参数小解">
+<meta name="twitter:description" content="由于Linux的内核参数信息都存在内存中，因此可以通过命令直接修改，并且修改后直接生效，这个只是引进变量的一种方法。但是，当系统重新启动后，原来设置的参数值就会丢失，而系统每次启动时都会自动去/etc/sysctl.conf文件中读取内核参数，因此将内核的参数配置写入这个文件中，永久性的一个方法。
+配置方法首先打开/etc/sysctl.conf文件，查看如下两行的设置值，这里是：
+123456#">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://fangdaidai.github.io/2012/11/22/sysctl/"/>
+
+
+
+
+
+  <title> linux内核参数小解 | 矜能负才.Zero </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矜能负才.Zero</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/11/22/sysctl/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                linux内核参数小解
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-11-22T23:47:44+08:00">
+                2012/11-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>由于Linux的内核参数信息都存在内存中，因此可以通过命令直接修改，并且修改后直接生效，这个只是引进变量的一种方法。<br>但是，当系统重新启动后，原来设置的参数值就会丢失，而系统每次启动时都会自动去/etc/sysctl.conf文件中读取内核参数，因此将内核的参数配置写入这个文件中，永久性的一个方法。</p>
+<h3 id="配置方法"><a href="#配置方法" class="headerlink" title="配置方法"></a>配置方法</h3><p>首先打开/etc/sysctl.conf文件，查看如下两行的设置值，这里是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># Controls the default maxmimum size of a mesage queue</div><div class="line">kernel.msgmnb = 65536</div><div class="line"># Controls the maximum size of a message, in bytes</div><div class="line">kernel.msgmax = 65536</div><div class="line"># Controls the maximum shared segment size, in bytes</div><div class="line">kernel.shmmax = 68719476736</div></pre></td></tr></table></figure>
+<p>如果系统默认的配置比这里给出的值大，就不要修改原有配置。同时在/etc/sysctl.conf文件最后，添加以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">fs.file-max = 6553600</div><div class="line">kernel.shmmni = 4096</div><div class="line">kernel.sem = 250 32000 100 128</div><div class="line">net.ipv4.ip_local_port_range = 1024 65000</div><div class="line">net.core.rmem_default = 4194304</div><div class="line">net.core.rmem_max = 4194304</div><div class="line">net.core.wmem_default = 262144</div><div class="line">net.core.wmem_max = 262144</div></pre></td></tr></table></figure>
+<p>这里的“fs.file-max = 6553600”其实是由“fs.file-max = 512 <em> PROCESSES”得到的，我们指定PROCESSES的值为12800，即为“fs.file-max =512 </em>12800”。 sysctl.conf文件修改完毕后，接着执行“sysctl -p”使设置生效。</p>
+<pre><code>root@localhost ~］# sysctl -p
+</code></pre><p>常用的内核参数的含义如下。</p>
+<p>kernel.shmmax：表示单个共享内存段的最大值，以字节为单位，此值一般为物理内存的一半，不过大一点也没关系，这里设定的为4GB，即<br>“4294967295/1024/1024/1024=4G”。<br>kernel.shmmni：表示单个共享内存段的最小值，一般为4kB，即4096bit.<br>kernel.shmall：表示可用共享内存的总量，单位是页，在32位系统上一页等于4kB，也就是4096字节。<br>fs.file-max：表示文件句柄的最大数量。文件句柄表示在Linux系统中可以打开的文件数量。<br>ip_local_port_range：表示端口的范围，为指定的内容。<br>kernel.sem：表示设置的信号量，这4个参数内容大小固定。<br>net.core.rmem_default：表示接收套接字缓冲区大小的缺省值（以字节为单位）。<br>net.core.rmem_max ：表示接收套接字缓冲区大小的最大值（以字节为单位）。<br>net.core.wmem_default：表示发送套接字缓冲区大小的缺省值（以字节为单位）。<br>net.core.wmem_max：表示发送套接字缓冲区大小的最大值（以字节为单位）。</p>
+<h3 id="生产环境案例"><a href="#生产环境案例" class="headerlink" title="生产环境案例"></a>生产环境案例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">net.ipv4.ip_forward = 0</div><div class="line">net.ipv4.conf.default.rp_filter = 1</div><div class="line">net.ipv4.conf.default.accept_source_route = 0</div><div class="line">kernel.sysrq = 0</div><div class="line">kernel.core_uses_pid = 1</div><div class="line">net.ipv4.tcp_syncookies = 1</div><div class="line">kernel.msgmnb = 65536</div><div class="line">kernel.msgmax = 65536</div><div class="line">kernel.shmmax = 68719476736</div><div class="line">kernel.shmall = 4294967296</div><div class="line">vm.overcommit_memory = 1</div><div class="line">vm.swappiness = 1</div><div class="line">fs.file-max = 1617992</div><div class="line">fs.inotify.max_user_instances = 128</div><div class="line">fs.inotify.max_user_watches = 1048576</div><div class="line">fs.inotify.max_queued_events = 1048576</div><div class="line">net.core.somaxconn = 262144</div><div class="line">net.core.wmem_max = 16777216</div><div class="line">net.core.rmem_max = 16777216</div><div class="line">net.core.wmem_default = 131072</div><div class="line">net.core.rmem_default = 131072</div><div class="line">net.core.netdev_max_backlog = 262144</div><div class="line">net.ipv4.tcp_timestamps = 1</div><div class="line">net.ipv4.tcp_syn_retries = 1</div><div class="line">net.ipv4.tcp_synack_retries = 1</div><div class="line">net.ipv4.tcp_max_orphans = 262144</div><div class="line">net.ipv4.tcp_max_tw_buckets = 1048576</div><div class="line">net.ipv4.tcp_keepalive_time = 60</div><div class="line">net.ipv4.tcp_keepalive_probes = 3</div><div class="line">net.ipv4.tcp_keepalive_intvl = 15</div><div class="line">net.ipv4.tcp_retries1 = 3</div><div class="line">net.ipv4.tcp_retries2 = 5</div><div class="line">net.ipv4.tcp_fin_timeout = 1</div><div class="line">net.ipv4.tcp_syncookies = 1</div><div class="line">net.ipv4.tcp_tw_recycle = 0</div><div class="line">net.ipv4.tcp_max_syn_backlog = 262144</div><div class="line">net.ipv4.ip_local_port_range = 10000 65535</div><div class="line">net.ipv4.tcp_wmem = 4096 131072 16777216</div><div class="line">net.ipv4.tcp_rmem = 4096 131072 16777216</div><div class="line">net.ipv4.tcp_tw_reuse = 1</div></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/运维/" rel="tag"># 运维</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2012/11/02/lvm-de/" rel="next" title="lvm缩容">
+                <i class="fa fa-chevron-left"></i> lvm缩容
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2012/11/26/linux-base/" rel="prev" title="linux最基础管理命令">
+                linux最基础管理命令 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置方法"><span class="nav-number">1.</span> <span class="nav-text">配置方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生产环境案例"><span class="nav-number">2.</span> <span class="nav-text">生产环境案例</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

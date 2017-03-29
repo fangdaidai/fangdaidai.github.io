@@ -1,0 +1,759 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="运维," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="文件结构
+/根目录┃┏━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━┓┃      ┃          ┃         ┃        ┃         ┃         ┃         ┃       ┃bin    home     dev       et">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux文件系统">
+<meta property="og:url" content="https://fangdaidai.github.io/2012/12/21/linux-flie/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="文件结构
+/根目录┃┏━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━┓┃      ┃          ┃         ┃        ┃         ┃         ┃         ┃       ┃bin    home     dev       et">
+<meta property="og:updated_time" content="2017-03-28T08:13:52.420Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux文件系统">
+<meta name="twitter:description" content="文件结构
+/根目录┃┏━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━┓┃      ┃          ┃         ┃        ┃         ┃         ┃         ┃       ┃bin    home     dev       et">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://fangdaidai.github.io/2012/12/21/linux-flie/"/>
+
+
+
+
+
+  <title> Linux文件系统 | 矜能负才.Zero </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矜能负才.Zero</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/12/21/linux-flie/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Linux文件系统
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-12-21T23:47:44+08:00">
+                2012/12-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h3><blockquote>
+<p>/根目录<br>┃<br>┏━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━┓<br>┃      ┃          ┃         ┃        ┃         ┃         ┃         ┃       ┃<br>bin    home     dev       etc       lib      sbin       tmp      usr     var<br>┃                                                                ┃<br>┏━┻━━━━━━━━┓          ┏━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━┻━━━━━━━━━━━━━┳━━━━━━━━┓<br>┃         ┃          ┃      ┃       ┃       ┃             ┃       ┃<br>rc.d    cron.d     X11R6   src    lib      local        man     bin<br>┃<br>┏━━━━━━━━━━━━━━━━━┳┻━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━┓<br>┃               ┃             ┃     ┃      ┃<br>init.d rc0.d rc1.d rc2.d …… linux bin lib src</p>
+</blockquote>
+<ol>
+<li>/bin 二进制可执行命令</li>
+<li>/dev 设备特殊文件</li>
+<li>/etc 系统管理和配置文件</li>
+<li>/etc/rc.d 启动的配置文件和脚本</li>
+<li>/home 用户主目录的基点，比如用户user的主目录就是/home/user，可以用~user表示</li>
+<li>/lib 标准程序设计库，又叫动态链接共享库，作用类似windows里的.dll文件</li>
+<li>/sbin 系统管理命令，这里存放的是系统管理员使用的管理程序</li>
+<li>/tmp 公用的临时文件存储点</li>
+<li>/root 系统管理员的主目录（呵呵，特权阶级）</li>
+<li>/mnt 系统提供这个目录是让用户临时挂载其他的文件系统。</li>
+<li>/lost+found 这个目录平时是空的，系统非正常关机而留下“无家可归”的文件（windows下叫什么.chk）就在这里</li>
+<li>/proc 虚拟的目录，是系统内存的映射。可直接访问这个目录来获取系统信　　息。</li>
+<li>/var 某些大文件的溢出区，比方说各种服务的日志文件</li>
+<li>/usr 最庞大的目录，要用到的应用程序和文件几乎都在这个目录。其中包　　含：</li>
+<li>/usr/X11R6 存放X window的目录</li>
+<li>/usr/bin 众多的应用程序</li>
+<li>/usr/sbin 超级用户的一些管理程序</li>
+<li>/usr/doc linux文档</li>
+<li>/usr/include linux下开发和编译应用程序所需要的头文件</li>
+<li>/usr/lib 常用的动态链接库和软件包的配置文件</li>
+<li>/usr/man 帮助文档</li>
+<li>/usr/src 源代码，linux内核的源代码就放在/usr/src/linux里</li>
+<li>/usr/local/bin 本地增加的命令</li>
+<li>/usr/local/lib 本地增加的库</li>
+</ol>
+<h3 id="File-and-Directory-Names-规则"><a href="#File-and-Directory-Names-规则" class="headerlink" title="File and Directory Names 规则"></a>File and Directory Names 规则</h3><p>不超过255个字符，不能不能使用“/”字符。如果使用空格或特殊字符时，需要用引号将其括起来。文件名是区分大小写的。</p>
+<h3 id="路径"><a href="#路径" class="headerlink" title="路径"></a>路径</h3><p>绝对路径:已“/”开头<br>相对路径：当前是/home/user1 可用../user2找到user2<br>cd 改变当前路径。cd ..回到上层目录；cd -回到刚才工作的目录。<br>~ 表示home目录。<br>pwd 查看当前目录。<br>ls [options][files_or_dirs] 查看目录里的内容。ls /查看根目录的内容。<br>例：<br>drwxr-xr-x 2 root root 40969 jun 8 14:08 bin<br>权限属性 该目录下的 拥有者 拥有者属 大小 创建或最后一次被修改 的时间<br>于的群组<br>文件数</p>
+<h3 id="cp-文件或目录的命令："><a href="#cp-文件或目录的命令：" class="headerlink" title="cp 文件或目录的命令："></a>cp 文件或目录的命令：</h3><p>当目标是一个目录且已存在时，复制的文件/目录将会以原文件名被复制到目标目录下，且可复制多个文件到目标目录中；<br>当目标是一个文件且已存在时，复制的文件/目录将覆盖目标文件；<br>当目标不存在时，复制的文件将被创建一个新的名字。<br>复制目录时，需要加-r参数。-p表示保留原目录的原始创建或最后修改时间。-a包括-r -p。</p>
+<h3 id="mv-–move-and-or-rename-files-and-directories"><a href="#mv-–move-and-or-rename-files-and-directories" class="headerlink" title="mv –move and/or rename files and directories"></a>mv –move and/or rename files and directories</h3><p>mv [options] file destination<br>如果目标是一个目录，可以一次同时转移多个文件到目标目录；<br>例，mv doc/2006 doc/2009 将目录doc下的文件2006重命名为2009.<br>mv doc/2009 doc1/2010 将目录doc下的文件2009转移到目录的doc1中，并重命名为2010<br>mv doc/2009 doc1 将目录doc下的文件2009转移到目录doc1中<br>mv doc doc1 若doc1不存在，则是将目录doc重命名为的的doc1；否则是将doc1转移到doc1中。</p>
+<h3 id="rm-删除文件"><a href="#rm-删除文件" class="headerlink" title="rm 删除文件"></a>rm 删除文件</h3><p>rm [options] filenames…<br>-i 默认的，出现确认是否要删除文件(interactive)<br>-r 删除目录时必须要用的(recursive)<br>-f 强制删除，不出现提示(force)</p>
+<h3 id="touch（003-04-00：42：23）"><a href="#touch（003-04-00：42：23）" class="headerlink" title="touch（003-04 00：42：23）"></a>touch（003-04 00：42：23）</h3><p>创建一个新的文档，例：touch doc/text1.txt</p>
+<h3 id="less-doc-text1-txt-查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入-insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。"><a href="#less-doc-text1-txt-查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入-insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。" class="headerlink" title="less doc/text1.txt 查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入 insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。"></a>less doc/text1.txt 查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入 insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。</h3><h3 id="创建和删除目录："><a href="#创建和删除目录：" class="headerlink" title="创建和删除目录："></a>创建和删除目录：</h3><p>mkdir make a directory<br>rmdir remove an empyt directory<br>rm -r 删除目录及其内容</p>
+<h3 id="使用nautilus浏览文件系统，在gnome图形界面下浏览。"><a href="#使用nautilus浏览文件系统，在gnome图形界面下浏览。" class="headerlink" title="使用nautilus浏览文件系统，在gnome图形界面下浏览。"></a>使用nautilus浏览文件系统，在gnome图形界面下浏览。</h3><p>1）在命令行输入nautilus<br>2）桌面图标<br>3）applications—File Browser</p>
+<h3 id="file查看文件格式-。例，file-doc-hudie-txt"><a href="#file查看文件格式-。例，file-doc-hudie-txt" class="headerlink" title="file查看文件格式 。例，file doc/hudie.txt"></a>file查看文件格式 。例，file doc/hudie.txt</h3><h3 id="cat整页查看文档内容。例，cat-s-b-doc-hudie-txt。-s将多个空行缩成一个空行，-b显示行号。"><a href="#cat整页查看文档内容。例，cat-s-b-doc-hudie-txt。-s将多个空行缩成一个空行，-b显示行号。" class="headerlink" title="cat整页查看文档内容。例，cat -s -b doc/hudie.txt。-s将多个空行缩成一个空行，-b显示行号。"></a>cat整页查看文档内容。例，cat -s -b doc/hudie.txt。-s将多个空行缩成一个空行，-b显示行号。</h3><p>less分页显示文件内容。可使用方向键、pgup、pgdown查看文件内容。<br>/text search for text<br>n next match<br>v open file in text editor<br>空格 查看下一页<br>b 查看上一页<br>ctrl+d向下转动半页<br>ctrl+u向上转动半页<br>g 回到顶端<br>G 回到底端</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/运维/" rel="tag"># 运维</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2012/12/21/ftp-install/" rel="next" title="ftp架设笔记">
+                <i class="fa fa-chevron-left"></i> ftp架设笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2013/02/09/oracle-view/" rel="prev" title="oracle常用动态性能视图">
+                oracle常用动态性能视图 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件结构"><span class="nav-number">1.</span> <span class="nav-text">文件结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#File-and-Directory-Names-规则"><span class="nav-number">2.</span> <span class="nav-text">File and Directory Names 规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路径"><span class="nav-number">3.</span> <span class="nav-text">路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cp-文件或目录的命令："><span class="nav-number">4.</span> <span class="nav-text">cp 文件或目录的命令：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mv-–move-and-or-rename-files-and-directories"><span class="nav-number">5.</span> <span class="nav-text">mv –move and/or rename files and directories</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rm-删除文件"><span class="nav-number">6.</span> <span class="nav-text">rm 删除文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#touch（003-04-00：42：23）"><span class="nav-number">7.</span> <span class="nav-text">touch（003-04 00：42：23）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#less-doc-text1-txt-查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入-insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。"><span class="nav-number">8.</span> <span class="nav-text">less doc/text1.txt 查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入 insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建和删除目录："><span class="nav-number">9.</span> <span class="nav-text">创建和删除目录：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用nautilus浏览文件系统，在gnome图形界面下浏览。"><span class="nav-number">10.</span> <span class="nav-text">使用nautilus浏览文件系统，在gnome图形界面下浏览。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#file查看文件格式-。例，file-doc-hudie-txt"><span class="nav-number">11.</span> <span class="nav-text">file查看文件格式 。例，file doc/hudie.txt</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cat整页查看文档内容。例，cat-s-b-doc-hudie-txt。-s将多个空行缩成一个空行，-b显示行号。"><span class="nav-number">12.</span> <span class="nav-text">cat整页查看文档内容。例，cat -s -b doc/hudie.txt。-s将多个空行缩成一个空行，-b显示行号。</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
