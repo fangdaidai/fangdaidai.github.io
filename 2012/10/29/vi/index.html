@@ -97,7 +97,7 @@ vi三种模式1)command mode 最下方有提示信息，或者是空白的。可
 <meta property="og:description" content="记得刚工作接触linux的时候，首先要学的就是如何编辑文件，那么vim编辑工具就来了。
 vi file文件名，打开文件。如无该文件，则创建该文件。:q — 离开vi编辑器a or i –进入编辑模式:w –存档:wq –存档并退出vi
 vi三种模式1)command mode 最下方有提示信息，或者是空白的。可移动光标、删除、复制、剪贴2)insert mode 按A键可进入insert mode">
-<meta property="og:updated_time" content="2017-03-28T07:12:09.880Z">
+<meta property="og:updated_time" content="2017-03-29T07:16:05.989Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="vi编辑器使用介绍">
 <meta name="twitter:description" content="记得刚工作接触linux的时候，首先要学的就是如何编辑文件，那么vim编辑工具就来了。
@@ -374,8 +374,8 @@ vi三种模式1)command mode 最下方有提示信息，或者是空白的。可
 <h4 id="vi三种模式"><a href="#vi三种模式" class="headerlink" title="vi三种模式"></a>vi三种模式</h4><p>1)command mode 最下方有提示信息，或者是空白的。可移动光标、删除、复制、剪贴<br>2)insert mode 按A键可进入insert mode，退出到command，按ESC键。<br>3)extend mode 从command mode按冒号(:)进入.离开、存档、搜索关键词时用该模式。</p>
 <h4 id="command-mode下，光标移动的控制键，"><a href="#command-mode下，光标移动的控制键，" class="headerlink" title="command mode下，光标移动的控制键，"></a>command mode下，光标移动的控制键，</h4><p>h 左<br>j 下<br>k 上<br>l 右（方向键也可）<br>w 到前一个单词<br>b 回退一个单词。<br>( 往下一个句子<br>) 回退一个句子<br>{ 往下一个段落<br>} 回退一个段落</p>
 <h4 id="进入insert模式"><a href="#进入insert模式" class="headerlink" title="进入insert模式"></a>进入insert模式</h4><p>a append after the cursor(光标)<br>i insert before the cursor<br>————————————————<br>A append to end of line<br>I insert beginning of line<br>————————————————<br>o open a line below(在光标所在行的下面新增一行空白)<br>O open a line above(在光标所在行的上面新增一行空白)</p>
-<h4 id="command-mode下的change、delete-and-Yank（copy）："><a href="#command-mode下的change、delete-and-Yank（copy）：" class="headerlink" title="command mode下的change、delete and Yank（copy）："></a>command mode下的change、delete and Yank（copy）：</h4><p>change delete Yank(copy)<br>—————————————————————-<br>Line cc dd yy<br>Letter cl dl yl<br>Word cw dw yw<br>—————————————————————-</p>
-<h4 id="p-P-粘贴命令。用来粘贴以上changed、deleted、copied的内容。"><a href="#p-P-粘贴命令。用来粘贴以上changed、deleted、copied的内容。" class="headerlink" title="p / P 粘贴命令。用来粘贴以上changed、deleted、copied的内容。"></a>p / P 粘贴命令。用来粘贴以上changed、deleted、copied的内容。</h4><p>1)For line oriented data:<br>p(小写) 粘贴数据到当前行的下面<br>P(大写) 粘贴数据到当前行的上面<br>2)For charater oriented data:<br>p(小写) 粘贴数据到当前光标的后面<br>P(大写) 粘贴数据到当前光标的前面</p>
+<h4 id="command-mode下的change、delete-and-Yank（copy）"><a href="#command-mode下的change、delete-and-Yank（copy）" class="headerlink" title="command mode下的change、delete and Yank（copy）"></a>command mode下的change、delete and Yank（copy）</h4><p>change delete Yank(copy)<br>—————————————————————-<br>Line cc dd yy<br>Letter cl dl yl<br>Word cw dw yw<br>—————————————————————-</p>
+<h4 id="p-P-粘贴命令"><a href="#p-P-粘贴命令" class="headerlink" title="p / P 粘贴命令"></a>p / P 粘贴命令</h4><p>用来粘贴以上changed、deleted、copied的内容。<br>1)For line oriented data:<br>p(小写) 粘贴数据到当前行的下面<br>P(大写) 粘贴数据到当前行的上面<br>2)For charater oriented data:<br>p(小写) 粘贴数据到当前光标的后面<br>P(大写) 粘贴数据到当前光标的前面</p>
 <h4 id="Undoing-Changes：command-mode"><a href="#Undoing-Changes：command-mode" class="headerlink" title="Undoing Changes：command mode"></a>Undoing Changes：command mode</h4><p>u undo most recent change</p>
 <p><ctrl-r> redo last “undone” change<br>U undo all changes to the current line</ctrl-r></p>
 <h4 id="Searching-for-Text：command-mode"><a href="#Searching-for-Text：command-mode" class="headerlink" title="Searching for Text：command mode"></a>Searching for Text：command mode</h4><p>/text search downwards for “text”<br>?text search upwards for “text”<br>——————————————–<br>n continue search in the same direction<br>N continue search in the opposite direction</p>
@@ -501,7 +501,7 @@ vi三种模式1)command mode 最下方有提示信息，或者是空白的。可
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-count">38</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -519,7 +519,7 @@ vi三种模式1)command mode 最下方有提示信息，或者是空白的。可
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -554,7 +554,7 @@ vi三种模式1)command mode 最下方有提示信息，或者是空白的。可
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#vi-file文件名，打开文件。如无该文件，则创建该文件。"><span class="nav-number">1.</span> <span class="nav-text">vi file文件名，打开文件。如无该文件，则创建该文件。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vi三种模式"><span class="nav-number">2.</span> <span class="nav-text">vi三种模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#command-mode下，光标移动的控制键，"><span class="nav-number">3.</span> <span class="nav-text">command mode下，光标移动的控制键，</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进入insert模式"><span class="nav-number">4.</span> <span class="nav-text">进入insert模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#command-mode下的change、delete-and-Yank（copy）："><span class="nav-number">5.</span> <span class="nav-text">command mode下的change、delete and Yank（copy）：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#p-P-粘贴命令。用来粘贴以上changed、deleted、copied的内容。"><span class="nav-number">6.</span> <span class="nav-text">p / P 粘贴命令。用来粘贴以上changed、deleted、copied的内容。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Undoing-Changes：command-mode"><span class="nav-number">7.</span> <span class="nav-text">Undoing Changes：command mode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Searching-for-Text：command-mode"><span class="nav-number">8.</span> <span class="nav-text">Searching for Text：command mode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#command-mode-小技巧"><span class="nav-number">9.</span> <span class="nav-text">command mode 小技巧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#存档和退出："><span class="nav-number">10.</span> <span class="nav-text">存档和退出：</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#vi-file文件名，打开文件。如无该文件，则创建该文件。"><span class="nav-number">1.</span> <span class="nav-text">vi file文件名，打开文件。如无该文件，则创建该文件。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vi三种模式"><span class="nav-number">2.</span> <span class="nav-text">vi三种模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#command-mode下，光标移动的控制键，"><span class="nav-number">3.</span> <span class="nav-text">command mode下，光标移动的控制键，</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进入insert模式"><span class="nav-number">4.</span> <span class="nav-text">进入insert模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#command-mode下的change、delete-and-Yank（copy）"><span class="nav-number">5.</span> <span class="nav-text">command mode下的change、delete and Yank（copy）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#p-P-粘贴命令"><span class="nav-number">6.</span> <span class="nav-text">p / P 粘贴命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Undoing-Changes：command-mode"><span class="nav-number">7.</span> <span class="nav-text">Undoing Changes：command mode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Searching-for-Text：command-mode"><span class="nav-number">8.</span> <span class="nav-text">Searching for Text：command mode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#command-mode-小技巧"><span class="nav-number">9.</span> <span class="nav-text">command mode 小技巧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#存档和退出："><span class="nav-number">10.</span> <span class="nav-text">存档和退出：</span></a></li></ol></div>
             
 
           </div>

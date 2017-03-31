@@ -267,7 +267,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/09/26/tcping/">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2013/02/26/linuxpostfixextmail/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="方大壮">
@@ -289,8 +289,8 @@
             
               
                 
-                <a class="post-title-link" href="/2012/09/26/tcping/" itemprop="url">
-                  Tcpping介绍
+                <a class="post-title-link" href="/2013/02/26/linuxpostfixextmail/" itemprop="url">
+                  linux+postfix+extmail
                 </a>
               
             
@@ -306,8 +306,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-09-26T23:47:44+08:00">
-                2012/09-26
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2013-02-26T23:47:44+08:00">
+                2013/02-26
               </time>
             
 
@@ -366,11 +366,19 @@
       
         
           
-          介绍测试网络延迟最常用方法是使用ping工具，它使用ICMP协定。在某些情况下ICMP是被防火墙阻挡，这使得Ping在这情况下是无法使用的。此时若要检测网站的连通性，就必需使用TCP / UDP的方式，TCPPING为更容易绕过普通的防火墙规则的第3层测试工具。这样的一个第3层的测试工具TCPPING 。为了测量延迟， TCPPING采取所谓的半开连接技术，基于TCP三次握手的优势。也就是说，它发送一个TCPSYN包的端口号（默认为80）远程主机。如果远程主机正在侦听的端口，它会响应的TCP ACK数据包。否则，它会响应的TCP RST包。无论哪种方式， TCPPING可以测量往返时间远程主机
+          部分软件简介1、AMP －－－apache（web服务） 、mysql（数据库）、php（非必需） 的简称
+2、postfix －－mta 邮件系统核心
+3、courier-authlib－－一个为courier-imap，maildrop，sasl2 提供用户信息的后台进程序
+4、courier-imap －－提供pop3,pop3s,imap,imaps 服务的程序
+5、amavisd-new －－提供内容过滤
+6、clamav －－ 著名的杀毒软件
+7、extmail －－一个著名的webmail程序
+8、extman －－与extmail集成的后台管理程序
+安装环境centos 5.4
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2012/09/26/tcping/#more" rel="contents">
+            <a class="btn" href="/2013/02/26/linuxpostfixextmail/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -413,7 +421,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/09/26/puppet-install/">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2013/02/26/xen-install/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="方大壮">
@@ -435,8 +443,8 @@
             
               
                 
-                <a class="post-title-link" href="/2012/09/26/puppet-install/" itemprop="url">
-                  puppet安装
+                <a class="post-title-link" href="/2013/02/26/xen-install/" itemprop="url">
+                  xen安装win
                 </a>
               
             
@@ -452,8 +460,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-09-26T23:47:44+08:00">
-                2012/09-26
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2013-02-26T23:47:44+08:00">
+                2013/02-26
               </time>
             
 
@@ -512,15 +520,13 @@
       
         
           
-          安装准备服务端跟客户端均关闭防火墙[root@puppet01 ~]# service iptables stop
-[root@puppet01 ~]# chkconfig iptables off
-服务端跟客户端关闭修改selinux[root@puppet01 ~]# sed -i ‘SELINUX/s/enforce/disabled’ /etc/selinux/config
-服务端跟客户端修改hosts文件[root@puppet01 ~]# cat /etc/hosts
-1234127.0.0.1 localhost localhost.localdomain localhost4 
+          介绍Xen 是一个开放源代码的para-virtualizing虚拟机（VMM），或“管理程序 ”，是为x86架构的机器而设计的。Xen 可以在一套物理硬件上安全的执行多个虚拟机；Xen是基于内核的虚拟程序，它和操作平台结合的极为密切，所以它占用的资源最少。
+什么是虚拟机呢？可能大家知道VMWARE吧，是的，Xen就是类似这样的程序，比如我们可以在Fedora 上虚拟安装和使用Slackware、Debian、Gentoo … … 等发行版。因为Xen是基于内核的，相对VMWARE 来说，它占用的系统资源也就是VMWARE的百分之几左右。Xen是不是更有优势呢？
+Xen的特性;虚拟机的性能更接
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2012/09/26/puppet-install/#more" rel="contents">
+            <a class="btn" href="/2013/02/26/xen-install/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -563,7 +569,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/09/26/privilige/">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2013/02/18/sendmail/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="方大壮">
@@ -585,8 +591,8 @@
             
               
                 
-                <a class="post-title-link" href="/2012/09/26/privilige/" itemprop="url">
-                  User,Group,Permissions
+                <a class="post-title-link" href="/2013/02/18/sendmail/" itemprop="url">
+                  sendmail架设
                 </a>
               
             
@@ -602,8 +608,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-09-26T23:47:44+08:00">
-                2012/09-26
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2013-02-18T23:47:44+08:00">
+                2013/02-18
               </time>
             
 
@@ -662,13 +668,12 @@
       
         
           
-          每个运维人员需要注意服务器的安全，账号安全就是其中一种。
-每个用户都有一个uid，存储在 /etc/passwd中。每个用户都有一个home目录。root 帐户下，less /etc/passwd后，可看到passwd内容。每个用户资料占用每一行，用6个冒号：分隔7个栏位。如：fangz:x:500:500:fangz:/home/fangz:/bin/bashfangz –用户名x –需要密码，空则代表无需密码500 –uid500 –gidfangz –fullname/home/fangz –home目录路径/bin/bash –用户登录后首先运行的进程
-root帐户下，less /et
+          介绍sendmail是最重要的邮件传输代理程序。理解电子邮件的工作模式是非常重要的。一般情况下，我们把电子邮件程序分解成用户代理，传输代理和投递代理。用户代理用来接受用户的指令，将用户的信件传送至信件传输代理，如：outlook express、foxmail等。而投递代理则从信件传输代理取得信件传送至最终用户的邮箱，如：procmail。
+基本步骤1) 配置sendmail.mc文件；2) m4；3) 配置local-host-names4) 建立用户账户5) Service sendmail restart（1）配置DNS主配置文件named.conf（2）配置redking.com区域文
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2012/09/26/privilige/#more" rel="contents">
+            <a class="btn" href="/2013/02/18/sendmail/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -711,7 +716,7 @@ root帐户下，less /et
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/09/06/weblogic-jpython/">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2013/02/12/yum-installpuppet/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="方大壮">
@@ -733,8 +738,8 @@ root帐户下，less /et
             
               
                 
-                <a class="post-title-link" href="/2012/09/06/weblogic-jpython/" itemprop="url">
-                  利用jpython快速配置weblogic数据源
+                <a class="post-title-link" href="/2013/02/12/yum-installpuppet/" itemprop="url">
+                  yum源安装完成后yum安装puppet
                 </a>
               
             
@@ -750,451 +755,8 @@ root帐户下，less /et
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-09-06T23:47:44+08:00">
-                2012/09-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/中间件/" itemprop="url" rel="index">
-                    <span itemprop="name">中间件</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          概述脚本内容：
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798991001011021031041051061071081091101111121131141151161171181191201211221231241251261271281291301311321331
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2012/09/06/weblogic-jpython/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/08/31/weblogic-log/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="方大壮">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="矜能负才.Zero">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2012/08/31/weblogic-log/" itemprop="url">
-                  Weblogic日志规范
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-08-31T23:47:44+08:00">
-                2012/08-31
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/中间件/" itemprop="url" rel="index">
-                    <span itemprop="name">中间件</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          日志说明server 运行日志WebLogic server在启动或运行过程中会把相关日志写入Server.log。该文件记录WebLogic的启动及关闭等其他运行信息。
-Http访问日志在WebLogic中可以对用HTTP，HTTPS协议访问的服务器上的文件都做记录，该LOG文件默认的名字为Access.log,内容如下，该文件具体记录在某个时间，某个IP地址的客户端访问了服务器上的那个文件。
-域日志记录一个DOMIAN的运行情况，一个DOMAIN中的各个WebLogic server可以把它们的一些运行信息（比如：很严重的错误）发送给一个DOMAIN的ADMINISTRATOR SERVE
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2012/08/31/weblogic-log/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/08/18/oracle-bak/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="方大壮">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="矜能负才.Zero">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2012/08/18/oracle-bak/" itemprop="url">
-                  oracle备份小常识
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-08-18T23:47:44+08:00">
-                2012/08-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DataBase/" itemprop="url" rel="index">
-                    <span itemprop="name">DataBase</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          备份1.一致性备份（冷备，关闭实例下的备份）2.不一致性备份（热备，不用关闭实例下得备份）
-冷备与热备的区别冷备就是可以保证控制文件与数据文件的SCN号相同，冷备就是用操作系统命令将所有的控制文件、数据文件、参数文件、密码文件都复制一份，如果有损坏的文件就删除原来的文件将备份的文件复制到原路径热备不能保证备份时刻控制文件与数据文件的SCN号一样，如果损坏要恢复必须借助日志，所以一定要做归档
-备份的类型：完整备份（备份所有数据库块即所有的数据文件，至少一个控制文件，参数文件和密码文件）部分备份（备份部分表空间或者部分表）完全备份（备份所有数据文件的块，即备份所有数据文件）增量备份（备份变化的数据
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2012/08/18/oracle-bak/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/08/15/lvm-in/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="方大壮">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="矜能负才.Zero">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2012/08/15/lvm-in/" itemprop="url">
-                  lvm磁盘挂载和扩容
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-08-15T23:47:44+08:00">
-                2012/08-15
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2013-02-12T23:47:44+08:00">
+                2013/02-12
               </time>
             
 
@@ -1253,14 +815,16 @@ Http访问日志在WebLogic中可以对用HTTP，HTTPS协议访问的服务器�
       
         
           
-          lvm磁盘挂载先查看磁盘情况，这台服务器我加了两块空磁盘，sdc-50G，sdd-100G
-root@percona-node1 ~]# fdisk -l
+          可以开始puppet的安装了
+yum安装puppet[root@puppetserver yum] yum install puppet-server-3.7.1 puppet-3.7.1
 
-Disk /dev/sdb: 145.0 GB, 144955146240 bytes255 heads, 63 sectors/track, 17623 cylindersUnits = cylinders of 16065 * 512 = 8225280 bytesSector size (logical/physical): 512 bytes / 512 bytesI/O size (minimum/optimal): 512 b
+Dependencies Resolved
+Package Arch Version Repository Size
+Installing:puppet noarch 3.7.1-1.el5 puppetlabs-products 1.7 Mpuppet-server noarch 3.7.1-1.el5 puppetlabs-products 24 kInstalling for dependencie
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2012/08/15/lvm-in/#more" rel="contents">
+            <a class="btn" href="/2013/02/12/yum-installpuppet/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1303,7 +867,7 @@ Disk /dev/sdb: 145.0 GB, 144955146240 bytes255 heads, 63 sectors/track, 17623 cy
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/08/05/mysql-incre/">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2013/02/09/yum-repo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="方大壮">
@@ -1325,8 +889,8 @@ Disk /dev/sdb: 145.0 GB, 144955146240 bytes255 heads, 63 sectors/track, 17623 cy
             
               
                 
-                <a class="post-title-link" href="/2012/08/05/mysql-incre/" itemprop="url">
-                  补充mysql增量备份和恢复
+                <a class="post-title-link" href="/2013/02/09/yum-repo/" itemprop="url">
+                  yum源配置
                 </a>
               
             
@@ -1342,8 +906,158 @@ Disk /dev/sdb: 145.0 GB, 144955146240 bytes255 heads, 63 sectors/track, 17623 cy
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-08-05T23:47:44+08:00">
-                2012/08-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2013-02-09T23:47:44+08:00">
+                2013/02-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          Redhat Linux通常由于没有注册，导致yum程序无法使用，需要将其替换为centos的yum程序。
+准备下载Yum的安装包,由于体系结构的不同和包的更新，因此目录和文件名的版本号可能需要调整以下。目前是网站提供最新的rpm版本
+$ cd /ISO/yum_64_rpm
+$ wget http://centos.ustc.edu.cn/centos/5/os/x86_64/CentOS/yum-3.2.22-40.el5.centos.noarch.rpm
+$ wget http://centos.ustc.edu.cn/centos/5/os/x86_64/CentOS/yum-fas
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2013/02/09/yum-repo/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2013/02/09/oracle-view/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2013/02/09/oracle-view/" itemprop="url">
+                  oracle常用动态性能视图
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2013-02-09T23:47:44+08:00">
+                2013/02-09
               </time>
             
 
@@ -1402,13 +1116,24 @@ Disk /dev/sdb: 145.0 GB, 144955146240 bytes255 heads, 63 sectors/track, 17623 cy
       
         
           
-          这节还是补充一下增量恢复吧，数据库太大的时候，增量的好处就体现出来了。增量备份命令格式如下：
-innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=admin –incremental-basedir=/data/mysql/3306/backup/2015-05-05_05-00-04 –incremental /data/mysql/3306/backup/
-其中–incremental-basedir指向全备目录，–incremental指向增量备份的目录。上面语句执行成功之后，会在–incre
+          记住常用的动态性能视图（1）v$sysstat
+（2）v$sesstat
+（3）v$sql &amp; v$sql_plan
+（4）v$sqltext &amp; v$sqlarea
+（5）v$session
+（6）v$session_wait &amp; v$session_event
+（7）v$process
+（8）v$lock &amp; v$locked_object
+（9）v$filestat
+（10）v$session_longops
+（11）v$latch$ v$latch_children
+（12）v$db_object_cache
+（13）v$open_cursor
+（14）
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2012/08/05/mysql-incre/#more" rel="contents">
+            <a class="btn" href="/2013/02/09/oracle-view/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1451,7 +1176,7 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/07/28/innobackupex-bak/">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/12/21/linux-flie/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="方大壮">
@@ -1473,8 +1198,8 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
             
               
                 
-                <a class="post-title-link" href="/2012/07/28/innobackupex-bak/" itemprop="url">
-                  innobackupex恢复mysql数据
+                <a class="post-title-link" href="/2012/12/21/linux-flie/" itemprop="url">
+                  Linux文件系统
                 </a>
               
             
@@ -1490,8 +1215,8 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-07-28T23:47:44+08:00">
-                2012/07-28
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-12-21T23:47:44+08:00">
+                2012/12-21
               </time>
             
 
@@ -1513,8 +1238,8 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DataBase/" itemprop="url" rel="index">
-                    <span itemprop="name">DataBase</span>
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
                   </a>
                 </span>
 
@@ -1550,12 +1275,16 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
       
         
           
-          获取备份首先，备份文件先获取。比如，我们选取备份文件为：2015-04-20_05-00-06，该文件下有如下文件：
-12345678-rw-r–r–. 1 root root 359 Apr 20 15:54 backup-my.cnf-rw-r—–. 1 root root 3800039424 Apr 21 10:12 ibdata1-rw-r–r–. 1 root root 50331648 Apr 21 10:12 ib_logfile0-rw-r–r–. 1 root root 50331648 Apr 21 10:12 ib_logfile1-rw-r–r–. 1 root ro
+          文件结构
+/根目录┃┏━━━┳━━━┳━━━┳━━━╋━━━┳━━━┳━━━┳━━┓bin    home     dev       etc       lib      sbin       tmp      usr     var┏━┻━┓          ┏━━┳━━━┳━━┳━┻┳━━┓rc.d    cron.d     X11R6   src    lib      local        man     bin┏━━━┳┻━━━┳━━━┳━┓init.d rc0.d rc1.d rc2.d …… linux bin lib src
+
+
+/bin 二进制可执行命令
+/dev 
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2012/07/28/innobackupex-bak/#more" rel="contents">
+            <a class="btn" href="/2012/12/21/linux-flie/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1598,7 +1327,7 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/07/16/innobackupex/">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/12/21/ftp-install/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="方大壮">
@@ -1620,8 +1349,8 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
             
               
                 
-                <a class="post-title-link" href="/2012/07/16/innobackupex/" itemprop="url">
-                  innobackupex热备mysql
+                <a class="post-title-link" href="/2012/12/21/ftp-install/" itemprop="url">
+                  ftp架设笔记
                 </a>
               
             
@@ -1637,8 +1366,8 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-07-16T23:47:44+08:00">
-                2012/07-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-12-21T23:47:44+08:00">
+                2012/12-21
               </time>
             
 
@@ -1660,8 +1389,8 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DataBase/" itemprop="url" rel="index">
-                    <span itemprop="name">DataBase</span>
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
                   </a>
                 </span>
 
@@ -1697,12 +1426,317 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
       
         
           
-          Xtrabackup的安装下载最新版的Xtracbackup[root@vanelife-mysql ~]# wget http://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.2.10/binary/redhat/6/x86_64/percona-xtrabackup-2.2.10-1.el6.x86_64.rpm
-安装依赖包[root@vanelife-mysql ~]# yum -y install perl perl-devel libaio libaio-devel perl-Time-HiRes perl-DB
+          介绍FTP 是File Transfer Protocol（文件传输协议）的英文简称，而中文简称为“文传协议”。用于Internet上的控制文件的双向传输。同时，它也是一个应用程序（Application）。基于不同的操作系统有不同的FTP应用程序，而所有这些应用程序都遵守同一种协议以传输文件。在FTP的使用当中，用户经常遇到两个概念：”下载”（Download）和”上传”（Upload）。”下载”文件就是从远程主机拷贝文件至自己的计算机上；”上传”文件就是将文件从自己的计算机中拷贝至远程主机上。用Internet语言来说，用户可通过客户机程序向（从）远程主机上传（下载）文件。
+匿名用户ftp
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2012/07/16/innobackupex/#more" rel="contents">
+            <a class="btn" href="/2012/12/21/ftp-install/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/11/26/linux-base/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2012/11/26/linux-base/" itemprop="url">
+                  linux最基础管理命令
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-11-26T23:47:44+08:00">
+                2012/11-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          Linux系统中的命令：
+
+pr -n README 其中，pr是命令，-n是标志，README是变元。标志修饰命令，变元是命令的对象。
+
+ls
+
+mv
+环境变量。例，EXAMPLE=”hello word” (若环境变量值无空格等特殊字符，无需使用双引号“”) 。输入：\$EXAMPLE,则显示：hello word。即引用环境变量用美元符号$. env查看所以环境变量清单
+通配符：？ * []
+ps 查看进程
+echo 将任意字符串回显到终端
+shell提示符，默认是$。echo $PS1，显示当前环境变量的提示符。 PS1=”C&gt;” ,将提示符改为C&gt;。PS1表示一级提示符，
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2012/11/26/linux-base/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/11/22/sysctl/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2012/11/22/sysctl/" itemprop="url">
+                  linux内核参数小解
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2012-11-22T23:47:44+08:00">
+                2012/11-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          由于Linux的内核参数信息都存在内存中，因此可以通过命令直接修改，并且修改后直接生效，这个只是引进变量的一种方法。但是，当系统重新启动后，原来设置的参数值就会丢失，而系统每次启动时都会自动去/etc/sysctl.conf文件中读取内核参数，因此将内核的参数配置写入这个文件中，永久性的一个方法。
+配置方法首先打开/etc/sysctl.conf文件，查看如下两行的设置值，这里是：
+123456# Controls the default maxmimum size of a mesage queuekernel.msgmnb = 65536# Controls the maximum siz
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2012/11/22/sysctl/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1740,7 +1774,7 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1785,7 +1819,7 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-count">38</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1803,7 +1837,7 @@ innobackupex –defaults-file=/data/mysql/3306/my.cnf –user=admin –password=
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

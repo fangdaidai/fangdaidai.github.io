@@ -1,0 +1,758 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="消息队列," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="ActiveMQ具有强大和灵活的集群功能，但在使用的过程中会发现很多的缺点，ActiveMQ的集群方式主要由两种：Master-Slave（ActiveMQ5.8版本已不可用）和Broker Cluster。
+Master-SlaveMaster-Slave方式中，只能是Master提供服务，Slave是实时地备份Master的数据，以保证消息的可靠性。当Master失效时，Slave会自动升级为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Active MQ集群方案">
+<meta property="og:url" content="https://fangdaidai.github.io/2013/04/18/mqtt-ha/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="ActiveMQ具有强大和灵活的集群功能，但在使用的过程中会发现很多的缺点，ActiveMQ的集群方式主要由两种：Master-Slave（ActiveMQ5.8版本已不可用）和Broker Cluster。
+Master-SlaveMaster-Slave方式中，只能是Master提供服务，Slave是实时地备份Master的数据，以保证消息的可靠性。当Master失效时，Slave会自动升级为">
+<meta property="og:updated_time" content="2017-03-31T06:35:11.260Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Active MQ集群方案">
+<meta name="twitter:description" content="ActiveMQ具有强大和灵活的集群功能，但在使用的过程中会发现很多的缺点，ActiveMQ的集群方式主要由两种：Master-Slave（ActiveMQ5.8版本已不可用）和Broker Cluster。
+Master-SlaveMaster-Slave方式中，只能是Master提供服务，Slave是实时地备份Master的数据，以保证消息的可靠性。当Master失效时，Slave会自动升级为">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://fangdaidai.github.io/2013/04/18/mqtt-ha/"/>
+
+
+
+
+
+  <title> Active MQ集群方案 | 矜能负才.Zero </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矜能负才.Zero</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2013/04/18/mqtt-ha/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Active MQ集群方案
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2013-04-18T23:47:44+08:00">
+                2013/04-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>ActiveMQ具有强大和灵活的集群功能，但在使用的过程中会发现很多的缺点，ActiveMQ的集群方式主要由两种：Master-Slave（ActiveMQ5.8版本已不可用）和Broker Cluster。</p>
+<h3 id="Master-Slave"><a href="#Master-Slave" class="headerlink" title="Master-Slave"></a>Master-Slave</h3><p>Master-Slave方式中，只能是Master提供服务，Slave是实时地备份Master的数据，以保证消息的可靠性。当Master失效时，Slave会自动升级为Master，客户端会自动连接到Slave上工作。Master-Slave模式分为三类：Pure Master Slave、Shared File System Master Slave和JDBC Master Slave。</p>
+<h4 id="Pure-Master-Slave"><a href="#Pure-Master-Slave" class="headerlink" title="Pure Master Slave"></a>Pure Master Slave</h4><p>需要两个Broker，一个作为Master，另一个作为Slave，运行时，Slave通过网络实时从Master处复制数据，同时，如果Slave和Master失去连接，Slave就会自动升级为Master，继续为客户端提供消息服务.</p>
+<p>实践时，我们使用两个ActiveMQ服务器，一个作为Master，Master不需要做特殊的配置；另一个作为Slave，配置${ACTIVEMQ_HOME}/conf/activemq.xml文件，在<broker>节点中添加连接到Master的URI和设置Master失效后不关闭Slave，如下：</broker></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;broker xmlns=”http://activemq.apache.org/schema/core” brokerName=”pure_slave” masterConnectorURI=”tcp://0.0.0.0:61616″ shutdownOnMasterFailure=”false” dataDirectory=”$&#123;activemq.base&#125;”&gt;</div></pre></td></tr></table></figure>
+<p>同时修改Slave的服务端口，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;transportConnectors&gt;</div><div class="line">&lt;transportConnector name=”openwire” uri=”tcp://0.0.0.0:61617″/&gt;</div><div class="line"></div><div class="line">&lt;/transportConnectors&gt;</div></pre></td></tr></table></figure>
+<p>为了看到实践的效果，Master和Slave的消息持久化介质都是采用MySQL，并且Master和Slave分别连接不同的数据库。</p>
+<p>在消息生产者应用和消息消费者应用的Spring配置文件中添加以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=”brokerURL” value=”failover:(tcp://localhost:61616,tcp://localhost:61617)?initialReconnectDelay=100″ /&gt;</div></pre></td></tr></table></figure>
+<p>配置完成后，我们可以通过以下步骤来进行测试：</p>
+<p>A、启动Master和Slave，启动消息生产者应用，并分别发送一些Queue消息和Topic消息，如果此时订阅Topic消息的消费者设置了clientID，我们就可以在Master的数据库和Slave的数据库中看到尚未消费的消息，包括Queue和Topic的消息；</p>
+<p>B、启动消费者应用，可以接收到消息；</p>
+<p>C、关闭消费者，生产者继续发送一些消息A；</p>
+<p>D、停止Master；</p>
+<p>E、生产者继续发送消息B；</p>
+<p>F、启动消费者应用，消费者可以接收到消息A和消息B，说明Slave接替了Master的工作并复制了Master的消息。</p>
+<p>这种方式只能两台机器做集群，可以起到很好的双机热备功能，但只能失效一次，只能停机恢复Master-Slave结构。</p>
+<h3 id="Shared-File-System-Master-Slave"><a href="#Shared-File-System-Master-Slave" class="headerlink" title="Shared File System Master Slave"></a>Shared File System Master Slave</h3><p>Shared File System Master Slave就是利用共享文件系统做ActiveMQ集群，是基于ActiveMQ的默认数据库kahaDB完成的，kahaDB的底层是文件系统。这种方式的集群，Slave的个数没有限制，哪个ActiveMQ实例先获取共享文件的锁，那个实例就是Master，其它的ActiveMQ实例就是Slave，当当前的Master失效，其它的Slave就会去竞争共享文件锁，谁竞争到了谁就是Master。这种模式的好处就是当Master失效时不用手动去配置，只要有足够多的Slave。</p>
+<p>本例子是在一台机器上运行三个ActiveMQ实例，需要对ActiveMQ的配置文件做一些简单的配置，就是把持久化适配器的存储目录改为本地磁盘的一个固定目录，三个实例共享这个目录，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">&lt;kahaDB directory=”$&#123;activemq.data&#125;/shared_file/data/kahadb” /&gt;</div><div class="line"></div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
+<p>然后修改ActiveMQ实例的服务端口和jetty的服务端口，防止端口占用异常。启动三个ActiveMQ实例，就可以进行测试了。</p>
+<p>以上配置只能在一台机器进行，如果各个ActiveMQ实例需要运行在不同的机器，就需要用到分布式文件系统了。</p>
+<h3 id="JDBC-Master-Slave"><a href="#JDBC-Master-Slave" class="headerlink" title="JDBC Master Slave"></a>JDBC Master Slave</h3><p>JDBC Master Slave模式和Shared File Sysytem Master Slave模式的原理是一样的，只是把共享文件系统换成了共享数据库。我们只需在所有的ActiveMQ的主配置文件中（${ACTIVEMQ_HOME}/conf/activemq.xml）添加数据源，所有的数据源都指向同一个数据库，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;bean id=”mysql-ds” class=”org.apache.commons.dbcp.BasicDataSource” destroy-method=”close”&gt;</div><div class="line">&lt;property name=”driverClassName” value=”com.mysql.jdbc.Driver”/&gt;</div><div class="line"></div><div class="line">&lt;property name=”url” value=”jdbc:mysql://localhost:3306/cluster_jdbc?relaxAutoCommit=true”/&gt;</div><div class="line"></div><div class="line">&lt;property name=”username” value=”root”/&gt;</div><div class="line"></div><div class="line">&lt;property name=”password” value=”root”/&gt;</div><div class="line"></div><div class="line">&lt;property name=”maxActive” value=”200″/&gt;</div><div class="line"></div><div class="line">&lt;property name=”poolPreparedStatements” value=”true”/&gt;</div><div class="line"></div><div class="line">&lt;/bean&gt;</div></pre></td></tr></table></figure>
+<p>然后修改持久化适配器,修改配置文件的内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">&lt;!–&lt;kahaDB directory=”$&#123;activemq.data&#125;/kahadb”/&gt;–&gt;</div><div class="line"></div><div class="line">&lt;jdbcPersistenceAdapter dataDirectory=”$&#123;activemq.data&#125;” dataSource=”#mysql-ds”/&gt;</div><div class="line"></div><div class="line">&lt;/persistenceAdapter&gt;</div></pre></td></tr></table></figure>
+<p>这种方式的集群相对Shared File System Master Slave更加简单，更加容易地进行分布式部署，但是如果数据库失效，那么所有的ActiveMQ实例都将失效。</p>
+<p>以上三种方式的集群都不支持负载均衡，但可以解决单点故障的问题，以保证消息服务的可靠性。</p>
+<h4 id="Broker-Cluster"><a href="#Broker-Cluster" class="headerlink" title="Broker Cluster"></a>Broker Cluster</h4><p>Broker Cluster主要是通过network of Brokers在多个ActiveMQ实例之间进行消息的路由。Broker的集群分为Static Discovery和Dynamic Discovery两种。</p>
+<p>如果你正在使用client/server或者hub/spoke类型的拓扑结构并且你有很多的client很多的broker。这就有可能其中一个broker只有生产者没有消费者，这样的话消息会在这个broker上堆积，并且得不到处理。为了避免这种情况，ActiveMQ提供了网络连接模式（Network of brokers），该模式可以提供存储和转发消息的功能，具体就是broker之间可以互相传送消息，这样也允许我们在网络连接模式中提供重分发TOPIC和QUEUES的功能（参见：<a href="http://activemq.apache.org/how-do-distributed-queues-work.html）。" target="_blank" rel="external">http://activemq.apache.org/how-do-distributed-queues-work.html）。</a></p>
+<p>这允许一个client去连接任意一个broker， 并且当有错误发生的时候可以failover到其他的broker，它提供了从client的角度来观察一个broker集群</p>
+<p>网络连接模式允许我们放大client群到一个很大的数量级，因为我们可以运行我们需要的任意多个broker。</p>
+<p>你可以把该模式想象成一个client集群去连接一个broker集群同时拥有failover和discovery功能去做成的一个简单的易用的消息结构。</p>
+<p>（注：此处的网络连接模式，仅仅只是为了避免集群中的broker只有producer而没有consumer的情况，它会在不同的broker中间传送消息，以便让所有的消息都能有消费者来处理，但是该模式下不会有消费的备份，在任何时刻，对客户端来说同一个消息都只存在一份，若需要消息备份机制则需要Master Slave的支持）</p>
+<h3 id="Static-Discovery集群"><a href="#Static-Discovery集群" class="headerlink" title="Static Discovery集群"></a>Static Discovery集群</h3><p>Static Discovery集群就是通过硬编码的方式使用所有已知ActiveMQ实例节点的URI地址。如：消息生产者应用连接一个ActiveMQ实例，我们暂时称为MQ1，所有的消息都由该实例提供；两个消息消费者应用分别连接另外两个ActiveMQ实例，分别为MQ2和MQ3，两个消息消费者需要消费MQ1上的消息，但它们连接的都不是MQ1，可以通过Static Discovery方式把MQ1上的消息路由到MQ2和MQ3，为了保证消费者不因某个节点的失效而导致不能消费消息，在消费者应用中需要配置所有节点的URI。</p>
+<p>生产者ActiveMQ实例不需要特殊的配置，所有的消费者ActiveMQ实例需要添加networkConnectors节点，连接到生产者MQ实例，如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;span style=”color: #ff0000;”&gt;&lt;networkConnectors&gt;</div><div class="line">&lt;networkConnector uri=”static:failover://(tcp://localhost:61616)” duplex=”true” /&gt;</div><div class="line"></div><div class="line">&lt;/networkConnectors&gt;&lt;/span&gt;</div></pre></td></tr></table></figure>
+<p>上面这段配置需要加在<persistenceadapter>节点的前面。然后在消费者应用中设置brokerURL的值如：</persistenceadapter></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;property name=”brokerURL” value=”&lt;span style=”color: #ff0000;”&gt;failover:(tcp://localhost:61617)&lt;/span&gt;?initialReconnectDelay=100″ /&gt;</div></pre></td></tr></table></figure>
+<p>Static Discovery集群方式有些缺点，如不能解决单点故障问题，若某个Broker失效时，有可能造成数据的丢失，动态添加节点不够智能化。</p>
+<h3 id="Dynamic-Discovery集群"><a href="#Dynamic-Discovery集群" class="headerlink" title="Dynamic Discovery集群"></a>Dynamic Discovery集群</h3><p>Dynamic Discovery集群方式在配置ActiveMQ实例时，不需要知道所有其它实例的URI地址，只需在所有实例的${ACTIVEMQ_HOME}/conf/activemq.xml文件中添加以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;span style=”color: #ff0000;”&gt;&lt;networkConnectors&gt;</div><div class="line">&lt;networkConnector uri=”multicast://default” /&gt;</div><div class="line"></div><div class="line">&lt;/networkConnectors&gt;&lt;/span&gt;</div></pre></td></tr></table></figure>
+<p>同时在<transportconnectors>节点中添加以下内容：</transportconnectors></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;transportConnectors&gt;</div><div class="line">&lt;transportConnector name=”openwire” uri=”tcp://0.0.0.0:61616″ &lt;span style=”color: #ff0000;”&gt;discoveryUri=”multicast://default”&lt;/span&gt; /&gt;</div><div class="line"></div><div class="line">&lt;/transportConnectors&gt;</div></pre></td></tr></table></figure>
+<p>这样就可以实现消息在所有ActiveMQ实例之间进行路由。Dynamic Discovery集群方式的缺点和Static Discovery一样。</p>
+<p>从以上的分析可以看出，Master-Slave模式不支持负载均衡，但可以通过消息的实时备份或共享保证消息服务的可靠性，Broker Cluster模式支持负载均衡，可以提高消息的消费能力，但不能保证消息的可靠性。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/消息队列/" rel="tag"># 消息队列</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2013/04/11/nginx-ha/" rel="next" title="nginx双机热备方案">
+                <i class="fa fa-chevron-left"></i> nginx双机热备方案
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2013/04/21/activekeeplive/" rel="prev" title="activemq负载均衡+高可用方案">
+                activemq负载均衡+高可用方案 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">38</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Master-Slave"><span class="nav-number">1.</span> <span class="nav-text">Master-Slave</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Pure-Master-Slave"><span class="nav-number">1.1.</span> <span class="nav-text">Pure Master Slave</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Shared-File-System-Master-Slave"><span class="nav-number">2.</span> <span class="nav-text">Shared File System Master Slave</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDBC-Master-Slave"><span class="nav-number">3.</span> <span class="nav-text">JDBC Master Slave</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Broker-Cluster"><span class="nav-number">3.1.</span> <span class="nav-text">Broker Cluster</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Static-Discovery集群"><span class="nav-number">4.</span> <span class="nav-text">Static Discovery集群</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dynamic-Discovery集群"><span class="nav-number">5.</span> <span class="nav-text">Dynamic Discovery集群</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

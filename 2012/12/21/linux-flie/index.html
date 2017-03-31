@@ -88,18 +88,18 @@
 
 
 <meta name="description" content="文件结构
-/根目录┃┏━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━┓┃      ┃          ┃         ┃        ┃         ┃         ┃         ┃       ┃bin    home     dev       et">
+/根目录┃┏━━━┳━━━┳━━━┳━━━╋━━━┳━━━┳━━━┳━━┓bin    home     dev       etc       lib      sbin       tmp      usr     var┏━┻━┓          ┏━━┳━━━┳━━┳━┻┳━━┓rc.d    cron.d     X11R6   src    lib      local">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux文件系统">
 <meta property="og:url" content="https://fangdaidai.github.io/2012/12/21/linux-flie/index.html">
 <meta property="og:site_name" content="矜能负才.Zero">
 <meta property="og:description" content="文件结构
-/根目录┃┏━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━┓┃      ┃          ┃         ┃        ┃         ┃         ┃         ┃       ┃bin    home     dev       et">
-<meta property="og:updated_time" content="2017-03-28T08:13:52.420Z">
+/根目录┃┏━━━┳━━━┳━━━┳━━━╋━━━┳━━━┳━━━┳━━┓bin    home     dev       etc       lib      sbin       tmp      usr     var┏━┻━┓          ┏━━┳━━━┳━━┳━┻┳━━┓rc.d    cron.d     X11R6   src    lib      local">
+<meta property="og:updated_time" content="2017-03-29T07:14:19.902Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux文件系统">
 <meta name="twitter:description" content="文件结构
-/根目录┃┏━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━┓┃      ┃          ┃         ┃        ┃         ┃         ┃         ┃       ┃bin    home     dev       et">
+/根目录┃┏━━━┳━━━┳━━━┳━━━╋━━━┳━━━┳━━━┳━━┓bin    home     dev       etc       lib      sbin       tmp      usr     var┏━┻━┓          ┏━━┳━━━┳━━┳━┻┳━━┓rc.d    cron.d     X11R6   src    lib      local">
 
 
 
@@ -367,7 +367,7 @@
 
       
         <h3 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h3><blockquote>
-<p>/根目录<br>┃<br>┏━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━╋━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━┓<br>┃      ┃          ┃         ┃        ┃         ┃         ┃         ┃       ┃<br>bin    home     dev       etc       lib      sbin       tmp      usr     var<br>┃                                                                ┃<br>┏━┻━━━━━━━━┓          ┏━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━┻━━━━━━━━━━━━━┳━━━━━━━━┓<br>┃         ┃          ┃      ┃       ┃       ┃             ┃       ┃<br>rc.d    cron.d     X11R6   src    lib      local        man     bin<br>┃<br>┏━━━━━━━━━━━━━━━━━┳┻━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━┓<br>┃               ┃             ┃     ┃      ┃<br>init.d rc0.d rc1.d rc2.d …… linux bin lib src</p>
+<p>/根目录<br>┃<br>┏━━━┳━━━┳━━━┳━━━╋━━━┳━━━┳━━━┳━━┓<br>bin    home     dev       etc       lib      sbin       tmp      usr     var<br>┏━┻━┓          ┏━━┳━━━┳━━┳━┻┳━━┓<br>rc.d    cron.d     X11R6   src    lib      local        man     bin<br>┏━━━┳┻━━━┳━━━┳━┓<br>init.d rc0.d rc1.d rc2.d …… linux bin lib src</p>
 </blockquote>
 <ol>
 <li>/bin 二进制可执行命令</li>
@@ -400,10 +400,11 @@
 <h3 id="cp-文件或目录的命令："><a href="#cp-文件或目录的命令：" class="headerlink" title="cp 文件或目录的命令："></a>cp 文件或目录的命令：</h3><p>当目标是一个目录且已存在时，复制的文件/目录将会以原文件名被复制到目标目录下，且可复制多个文件到目标目录中；<br>当目标是一个文件且已存在时，复制的文件/目录将覆盖目标文件；<br>当目标不存在时，复制的文件将被创建一个新的名字。<br>复制目录时，需要加-r参数。-p表示保留原目录的原始创建或最后修改时间。-a包括-r -p。</p>
 <h3 id="mv-–move-and-or-rename-files-and-directories"><a href="#mv-–move-and-or-rename-files-and-directories" class="headerlink" title="mv –move and/or rename files and directories"></a>mv –move and/or rename files and directories</h3><p>mv [options] file destination<br>如果目标是一个目录，可以一次同时转移多个文件到目标目录；<br>例，mv doc/2006 doc/2009 将目录doc下的文件2006重命名为2009.<br>mv doc/2009 doc1/2010 将目录doc下的文件2009转移到目录的doc1中，并重命名为2010<br>mv doc/2009 doc1 将目录doc下的文件2009转移到目录doc1中<br>mv doc doc1 若doc1不存在，则是将目录doc重命名为的的doc1；否则是将doc1转移到doc1中。</p>
 <h3 id="rm-删除文件"><a href="#rm-删除文件" class="headerlink" title="rm 删除文件"></a>rm 删除文件</h3><p>rm [options] filenames…<br>-i 默认的，出现确认是否要删除文件(interactive)<br>-r 删除目录时必须要用的(recursive)<br>-f 强制删除，不出现提示(force)</p>
-<h3 id="touch（003-04-00：42：23）"><a href="#touch（003-04-00：42：23）" class="headerlink" title="touch（003-04 00：42：23）"></a>touch（003-04 00：42：23）</h3><p>创建一个新的文档，例：touch doc/text1.txt</p>
-<h3 id="less-doc-text1-txt-查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入-insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。"><a href="#less-doc-text1-txt-查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入-insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。" class="headerlink" title="less doc/text1.txt 查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入 insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。"></a>less doc/text1.txt 查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入 insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。</h3><h3 id="创建和删除目录："><a href="#创建和删除目录：" class="headerlink" title="创建和删除目录："></a>创建和删除目录：</h3><p>mkdir make a directory<br>rmdir remove an empyt directory<br>rm -r 删除目录及其内容</p>
-<h3 id="使用nautilus浏览文件系统，在gnome图形界面下浏览。"><a href="#使用nautilus浏览文件系统，在gnome图形界面下浏览。" class="headerlink" title="使用nautilus浏览文件系统，在gnome图形界面下浏览。"></a>使用nautilus浏览文件系统，在gnome图形界面下浏览。</h3><p>1）在命令行输入nautilus<br>2）桌面图标<br>3）applications—File Browser</p>
-<h3 id="file查看文件格式-。例，file-doc-hudie-txt"><a href="#file查看文件格式-。例，file-doc-hudie-txt" class="headerlink" title="file查看文件格式 。例，file doc/hudie.txt"></a>file查看文件格式 。例，file doc/hudie.txt</h3><h3 id="cat整页查看文档内容。例，cat-s-b-doc-hudie-txt。-s将多个空行缩成一个空行，-b显示行号。"><a href="#cat整页查看文档内容。例，cat-s-b-doc-hudie-txt。-s将多个空行缩成一个空行，-b显示行号。" class="headerlink" title="cat整页查看文档内容。例，cat -s -b doc/hudie.txt。-s将多个空行缩成一个空行，-b显示行号。"></a>cat整页查看文档内容。例，cat -s -b doc/hudie.txt。-s将多个空行缩成一个空行，-b显示行号。</h3><p>less分页显示文件内容。可使用方向键、pgup、pgdown查看文件内容。<br>/text search for text<br>n next match<br>v open file in text editor<br>空格 查看下一页<br>b 查看上一页<br>ctrl+d向下转动半页<br>ctrl+u向上转动半页<br>g 回到顶端<br>G 回到底端</p>
+<h3 id="touch"><a href="#touch" class="headerlink" title="touch"></a>touch</h3><p>创建一个新的文档，例：touch doc/text1.txt<br> less doc/text1.txt 查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入 insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。</p>
+<h3 id="创建和删除目录："><a href="#创建和删除目录：" class="headerlink" title="创建和删除目录："></a>创建和删除目录：</h3><p>mkdir make a directory<br>rmdir remove an empyt directory<br>rm -r 删除目录及其内容</p>
+<h3 id="使用nautilus浏览文件系统"><a href="#使用nautilus浏览文件系统" class="headerlink" title="使用nautilus浏览文件系统"></a>使用nautilus浏览文件系统</h3><p>在gnome图形界面下浏览。<br>1）在命令行输入nautilus<br>2）桌面图标<br>3）applications—File Browser</p>
+<h3 id="file查看文件格式"><a href="#file查看文件格式" class="headerlink" title="file查看文件格式"></a>file查看文件格式</h3><p>例，file doc/hudie.txt</p>
+<h3 id="cat整页查看文档内容"><a href="#cat整页查看文档内容" class="headerlink" title="cat整页查看文档内容"></a>cat整页查看文档内容</h3><p>例，cat -s -b doc/hudie.txt。-s将多个空行缩成一个空行，-b显示行号。<br>less分页显示文件内容。可使用方向键、pgup、pgdown查看文件内容。<br>/text search for text<br>n next match<br>v open file in text editor<br>空格 查看下一页<br>b 查看上一页<br>ctrl+d向下转动半页<br>ctrl+u向上转动半页<br>g 回到顶端<br>G 回到底端</p>
 
       
     </div>
@@ -450,8 +451,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2013/02/09/yum-repo/" rel="prev" title="yum源配置">
-                yum源配置 <i class="fa fa-chevron-right"></i>
+              <a href="/2013/02/09/oracle-view/" rel="prev" title="oracle常用动态性能视图">
+                oracle常用动态性能视图 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -524,7 +525,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-count">38</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -542,7 +543,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -577,7 +578,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件结构"><span class="nav-number">1.</span> <span class="nav-text">文件结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#File-and-Directory-Names-规则"><span class="nav-number">2.</span> <span class="nav-text">File and Directory Names 规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路径"><span class="nav-number">3.</span> <span class="nav-text">路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cp-文件或目录的命令："><span class="nav-number">4.</span> <span class="nav-text">cp 文件或目录的命令：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mv-–move-and-or-rename-files-and-directories"><span class="nav-number">5.</span> <span class="nav-text">mv –move and/or rename files and directories</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rm-删除文件"><span class="nav-number">6.</span> <span class="nav-text">rm 删除文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#touch（003-04-00：42：23）"><span class="nav-number">7.</span> <span class="nav-text">touch（003-04 00：42：23）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#less-doc-text1-txt-查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入-insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。"><span class="nav-number">8.</span> <span class="nav-text">less doc/text1.txt 查看文件内容，按键盘V键可进入编辑模式对文件进行编辑；按I键进入 insert模式，按ESC退出insert模式，按WQ退出编辑模式，按Q回到命令提示符。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建和删除目录："><span class="nav-number">9.</span> <span class="nav-text">创建和删除目录：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用nautilus浏览文件系统，在gnome图形界面下浏览。"><span class="nav-number">10.</span> <span class="nav-text">使用nautilus浏览文件系统，在gnome图形界面下浏览。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#file查看文件格式-。例，file-doc-hudie-txt"><span class="nav-number">11.</span> <span class="nav-text">file查看文件格式 。例，file doc/hudie.txt</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cat整页查看文档内容。例，cat-s-b-doc-hudie-txt。-s将多个空行缩成一个空行，-b显示行号。"><span class="nav-number">12.</span> <span class="nav-text">cat整页查看文档内容。例，cat -s -b doc/hudie.txt。-s将多个空行缩成一个空行，-b显示行号。</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件结构"><span class="nav-number">1.</span> <span class="nav-text">文件结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#File-and-Directory-Names-规则"><span class="nav-number">2.</span> <span class="nav-text">File and Directory Names 规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路径"><span class="nav-number">3.</span> <span class="nav-text">路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cp-文件或目录的命令："><span class="nav-number">4.</span> <span class="nav-text">cp 文件或目录的命令：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mv-–move-and-or-rename-files-and-directories"><span class="nav-number">5.</span> <span class="nav-text">mv –move and/or rename files and directories</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rm-删除文件"><span class="nav-number">6.</span> <span class="nav-text">rm 删除文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#touch"><span class="nav-number">7.</span> <span class="nav-text">touch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建和删除目录："><span class="nav-number">8.</span> <span class="nav-text">创建和删除目录：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用nautilus浏览文件系统"><span class="nav-number">9.</span> <span class="nav-text">使用nautilus浏览文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#file查看文件格式"><span class="nav-number">10.</span> <span class="nav-text">file查看文件格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cat整页查看文档内容"><span class="nav-number">11.</span> <span class="nav-text">cat整页查看文档内容</span></a></li></ol></div>
             
 
           </div>

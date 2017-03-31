@@ -1,0 +1,727 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="消息队列," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="说明前面有章节介绍了mq的主从复制和集群方案，可以看到Master-Slave的部署方式虽然解决了高可用的问题，但不支持负载均衡，Broker-Cluster解决了负载均衡，但当其中一个Broker突然宕掉的话，那么存在于该Broker上处于Pending状态的message将会丢失，无法达到高可用的目的。由于目前ActiveMQ官网上并没有一个明确的将两种部署方式相结合的部署方案，所以我采用了两">
+<meta property="og:type" content="article">
+<meta property="og:title" content="activemq负载均衡+高可用方案">
+<meta property="og:url" content="https://fangdaidai.github.io/2013/04/21/activekeeplive/index.html">
+<meta property="og:site_name" content="矜能负才.Zero">
+<meta property="og:description" content="说明前面有章节介绍了mq的主从复制和集群方案，可以看到Master-Slave的部署方式虽然解决了高可用的问题，但不支持负载均衡，Broker-Cluster解决了负载均衡，但当其中一个Broker突然宕掉的话，那么存在于该Broker上处于Pending状态的message将会丢失，无法达到高可用的目的。由于目前ActiveMQ官网上并没有一个明确的将两种部署方式相结合的部署方案，所以我采用了两">
+<meta property="og:image" content="https://fangdaidai.github.io/img/13.png">
+<meta property="og:updated_time" content="2017-03-31T06:47:16.594Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="activemq负载均衡+高可用方案">
+<meta name="twitter:description" content="说明前面有章节介绍了mq的主从复制和集群方案，可以看到Master-Slave的部署方式虽然解决了高可用的问题，但不支持负载均衡，Broker-Cluster解决了负载均衡，但当其中一个Broker突然宕掉的话，那么存在于该Broker上处于Pending状态的message将会丢失，无法达到高可用的目的。由于目前ActiveMQ官网上并没有一个明确的将两种部署方式相结合的部署方案，所以我采用了两">
+<meta name="twitter:image" content="https://fangdaidai.github.io/img/13.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://fangdaidai.github.io/2013/04/21/activekeeplive/"/>
+
+
+
+
+
+  <title> activemq负载均衡+高可用方案 | 矜能负才.Zero </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矜能负才.Zero</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">比我优秀的人还在努力，那我努力还有啥用。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2013/04/21/activekeeplive/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="方大壮">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矜能负才.Zero">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                activemq负载均衡+高可用方案
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2013-04-21T23:47:44+08:00">
+                2013/04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>前面有章节介绍了mq的主从复制和集群方案，可以看到Master-Slave的部署方式虽然解决了高可用的问题，但不支持负载均衡，Broker-Cluster解决了负载均衡，但当其中一个Broker突然宕掉的话，那么存在于该Broker上处于Pending状态的message将会丢失，无法达到高可用的目的。<br>由于目前ActiveMQ官网上并没有一个明确的将两种部署方式相结合的部署方案，所以我采用了两种方式结合起来部署。</p>
+<p><img src="/img/13.png" alt=""></p>
+<p>在本机完成2个broker的共享文件测试<br>2个broker activemq_node1和activemq_node2共享data文件夹。</p>
+<pre><code>[root@vanelife-mq1 data]# ll
+</code></pre><blockquote>
+<p>total 47092<br>drwxr-xr-x. 11 root root 4096 Jul 11 2014 activemq_node1<br>drwxr-xr-x. 11 root root 4096 May 21 07:14 activemq_node2<br>drwxr-xr-x. 2 root root 4096 May 21 07:13 data</p>
+</blockquote>
+<p>配置如下：</p>
+<h3 id="node1全配置"><a href="#node1全配置" class="headerlink" title="node1全配置"></a>node1全配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div></pre></td><td class="code"><pre><div class="line">&lt;!–</div><div class="line">Licensed to the Apache Software Foundation (ASF) under one or more</div><div class="line">contributor license agreements. See the NOTICE file distributed with</div><div class="line">this work for additional information regarding copyright ownership.</div><div class="line">The ASF licenses this file to You under the Apache License, Version 2.0</div><div class="line">(the “License”); you may not use this file except in compliance with</div><div class="line">the License. You may obtain a copy of the License at</div><div class="line"></div><div class="line">http://www.apache.org/licenses/LICENSE-2.0</div><div class="line"></div><div class="line">Unless required by applicable law or agreed to in writing, software</div><div class="line">distributed under the License is distributed on an “AS IS” BASIS,</div><div class="line">WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</div><div class="line">See the License for the specific language governing permissions and</div><div class="line">limitations under the License.</div><div class="line">–&gt;</div><div class="line">&lt;!– START SNIPPET: example –&gt;</div><div class="line">&lt;beans</div><div class="line">xmlns=”http://www.springframework.org/schema/beans”</div><div class="line">xmlns:xsi=”http://www.w3.org/2001/XMLSchema-instance”</div><div class="line">xsi:schemaLocation=”http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd</div><div class="line">http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd”&gt;</div><div class="line"></div><div class="line">&lt;!– Allows us to use system properties as variables in this configuration file –&gt;</div><div class="line">&lt;bean class=”org.springframework.beans.factory.config.PropertyPlaceholderConfigurer”&gt;</div><div class="line">&lt;property name=”locations”&gt;</div><div class="line">&lt;value&gt;file:$&#123;activemq.conf&#125;/credentials.properties&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line"></div><div class="line">&lt;!– Allows accessing the server log –&gt;</div><div class="line">&lt;bean id=”logQuery” class=”org.fusesource.insight.log.log4j.Log4jLogQuery”</div><div class="line">lazy-init=”false” scope=”singleton”</div><div class="line">init-method=”start” destroy-method=”stop”&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line"></div><div class="line">&lt;!–</div><div class="line">The &lt;broker&gt; element is used to configure the ActiveMQ broker.</div><div class="line">–&gt;</div><div class="line">&lt;broker xmlns=”http://activemq.apache.org/schema/core” brokerName=”broker1” dataDirectory=”$&#123;activemq.data&#125;/data”&gt;</div><div class="line"></div><div class="line">&lt;destinationPolicy&gt;</div><div class="line">&lt;policyMap&gt;</div><div class="line">&lt;policyEntries&gt;</div><div class="line">&lt;policyEntry topic=”&gt;” &gt;</div><div class="line">&lt;!– The constantPendingMessageLimitStrategy is used to prevent</div><div class="line">slow topic consumers to block producers and affect other consumers</div><div class="line">by limiting the number of messages that are retained</div><div class="line">For more information, see:</div><div class="line"></div><div class="line">http://activemq.apache.org/slow-consumer-handling.html</div><div class="line"></div><div class="line">–&gt;</div><div class="line">&lt;pendingMessageLimitStrategy&gt;</div><div class="line">&lt;constantPendingMessageLimitStrategy limit=”1000″/&gt;</div><div class="line">&lt;/pendingMessageLimitStrategy&gt;</div><div class="line">&lt;/policyEntry&gt;</div><div class="line">&lt;/policyEntries&gt;</div><div class="line">&lt;/policyMap&gt;</div><div class="line">&lt;/destinationPolicy&gt;</div><div class="line">&lt;!–</div><div class="line">The managementContext is used to configure how ActiveMQ is exposed in</div><div class="line">JMX. By default, ActiveMQ uses the MBean server that is started by</div><div class="line">the JVM. For more information, see:</div><div class="line"></div><div class="line">http://activemq.apache.org/jmx.html</div><div class="line">–&gt;</div><div class="line">&lt;managementContext&gt;</div><div class="line">&lt;managementContext createConnector=”true” connectorPort=”1100“/&gt;</div><div class="line">&lt;/managementContext&gt;</div><div class="line"></div><div class="line">&lt;networkConnectors&gt; </div><div class="line">&lt;networkConnector uri=”multicast://default” </div><div class="line">dynamicOnly=”true” </div><div class="line">networkTTL=”3″ </div><div class="line">prefetchSize=”1″ </div><div class="line">decreaseNetworkConsumerPriority=”true” /&gt; </div><div class="line">&lt;/networkConnectors&gt;</div><div class="line"></div><div class="line">&lt;!–</div><div class="line">Configure message persistence for the broker. The default persistence</div><div class="line">mechanism is the KahaDB store (identified by the kahaDB tag).</div><div class="line">For more information, see:</div><div class="line"></div><div class="line">http://activemq.apache.org/persistence.html</div><div class="line">–&gt;</div><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">&lt;kahaDB directory=”/data/data“/&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div><div class="line">&lt;!–</div><div class="line">The systemUsage controls the maximum amount of space the broker will</div><div class="line">use before disabling caching and/or slowing down producers. For more information, see:</div><div class="line">http://activemq.apache.org/producer-flow-control.html</div><div class="line">–&gt;</div><div class="line">&lt;systemUsage&gt;</div><div class="line">&lt;systemUsage&gt;</div><div class="line">&lt;memoryUsage&gt;</div><div class="line">&lt;memoryUsage percentOfJvmHeap=”70″ /&gt;</div><div class="line">&lt;/memoryUsage&gt;</div><div class="line">&lt;storeUsage&gt;</div><div class="line">&lt;storeUsage limit=”100 gb”/&gt;</div><div class="line">&lt;/storeUsage&gt;</div><div class="line">&lt;tempUsage&gt;</div><div class="line">&lt;tempUsage limit=”50 gb”/&gt;</div><div class="line">&lt;/tempUsage&gt;</div><div class="line">&lt;/systemUsage&gt;</div><div class="line">&lt;/systemUsage&gt;</div><div class="line"></div><div class="line">&lt;!–</div><div class="line">The transport connectors expose ActiveMQ over a given protocol to</div><div class="line">clients and other brokers. For more information, see:</div><div class="line"></div><div class="line">http://activemq.apache.org/configuring-transports.html</div><div class="line">–&gt;</div><div class="line">&lt;transportConnectors&gt;</div><div class="line">&lt;!– DOS protection, limit concurrent connections to 1000 and frame size to 100MB –&gt;</div><div class="line">&lt;transportConnector name=”openwire” discoveryUri=”multicast://default” uri=”tcp://0.0.0.0:61616?maximumConnections=1000&amp;amp;wireFormat.maxFrameSize=104857600″/&gt;</div><div class="line">&lt;transportConnector name=”mqtt” uri=”mqtt://0.0.0.0:1883?maximumConnections=1000&amp;amp;wireFormat.maxFrameSize=104857600″/&gt;</div><div class="line">&lt;/transportConnectors&gt;</div><div class="line"></div><div class="line">&lt;!– destroy the spring context on shutdown to stop jetty –&gt;</div><div class="line">&lt;shutdownHooks&gt;</div><div class="line">&lt;bean xmlns=”http://www.springframework.org/schema/beans” class=”org.apache.activemq.hooks.SpringContextHook” /&gt;</div><div class="line">&lt;/shutdownHooks&gt;</div><div class="line"></div><div class="line">&lt;/broker&gt;</div><div class="line"></div><div class="line">&lt;!–</div><div class="line">Enable web consoles, REST and Ajax APIs and demos</div><div class="line">The web consoles requires by default login, you can disable this in the jetty.xml file</div><div class="line"></div><div class="line">Take a look at $&#123;ACTIVEMQ_HOME&#125;/conf/jetty.xml for more details</div><div class="line">–&gt;</div><div class="line">&lt;import resource=”jetty.xml”/&gt;</div><div class="line"></div><div class="line">&lt;/beans&gt;</div><div class="line">&lt;!– END SNIPPET: example –&gt;</div></pre></td></tr></table></figure>
+<h3 id="node2全配置"><a href="#node2全配置" class="headerlink" title="node2全配置"></a>node2全配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div></pre></td><td class="code"><pre><div class="line">&lt;!–</div><div class="line">Licensed to the Apache Software Foundation (ASF) under one or more</div><div class="line">contributor license agreements. See the NOTICE file distributed with</div><div class="line">this work for additional information regarding copyright ownership.</div><div class="line">The ASF licenses this file to You under the Apache License, Version 2.0</div><div class="line">(the “License”); you may not use this file except in compliance with</div><div class="line">the License. You may obtain a copy of the License at</div><div class="line"></div><div class="line">http://www.apache.org/licenses/LICENSE-2.0</div><div class="line"></div><div class="line">Unless required by applicable law or agreed to in writing, software</div><div class="line">distributed under the License is distributed on an “AS IS” BASIS,</div><div class="line">WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</div><div class="line">See the License for the specific language governing permissions and</div><div class="line">limitations under the License.</div><div class="line">–&gt;</div><div class="line">&lt;!– START SNIPPET: example –&gt;</div><div class="line">&lt;beans</div><div class="line">xmlns=”http://www.springframework.org/schema/beans”</div><div class="line">xmlns:xsi=”http://www.w3.org/2001/XMLSchema-instance”</div><div class="line">xsi:schemaLocation=”http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd</div><div class="line">http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd”&gt;</div><div class="line"></div><div class="line">&lt;!– Allows us to use system properties as variables in this configuration file –&gt;</div><div class="line">&lt;bean class=”org.springframework.beans.factory.config.PropertyPlaceholderConfigurer”&gt;</div><div class="line">&lt;property name=”locations”&gt;</div><div class="line">&lt;value&gt;file:$&#123;activemq.conf&#125;/credentials.properties&lt;/value&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line"></div><div class="line">&lt;!– Allows accessing the server log –&gt;</div><div class="line">&lt;bean id=”logQuery” class=”org.fusesource.insight.log.log4j.Log4jLogQuery”</div><div class="line">lazy-init=”false” scope=”singleton”</div><div class="line">init-method=”start” destroy-method=”stop”&gt;</div><div class="line">&lt;/bean&gt;</div><div class="line"></div><div class="line">&lt;!–</div><div class="line">The &lt;broker&gt; element is used to configure the ActiveMQ broker.</div><div class="line">–&gt;</div><div class="line">&lt;broker xmlns=”http://activemq.apache.org/schema/core” brokerName=”broker2” dataDirectory=”$&#123;activemq.data&#125;/data”&gt;</div><div class="line"></div><div class="line">&lt;destinationPolicy&gt;</div><div class="line">&lt;policyMap&gt;</div><div class="line">&lt;policyEntries&gt;</div><div class="line">&lt;policyEntry topic=”&gt;” &gt;</div><div class="line">&lt;!– The constantPendingMessageLimitStrategy is used to prevent</div><div class="line">slow topic consumers to block producers and affect other consumers</div><div class="line">by limiting the number of messages that are retained</div><div class="line">For more information, see:</div><div class="line"></div><div class="line">http://activemq.apache.org/slow-consumer-handling.html</div><div class="line"></div><div class="line">–&gt;</div><div class="line">&lt;pendingMessageLimitStrategy&gt;</div><div class="line">&lt;constantPendingMessageLimitStrategy limit=”1000″/&gt;</div><div class="line">&lt;/pendingMessageLimitStrategy&gt;</div><div class="line">&lt;/policyEntry&gt;</div><div class="line">&lt;/policyEntries&gt;</div><div class="line">&lt;/policyMap&gt;</div><div class="line">&lt;/destinationPolicy&gt;</div><div class="line">&lt;!–</div><div class="line">The managementContext is used to configure how ActiveMQ is exposed in</div><div class="line">JMX. By default, ActiveMQ uses the MBean server that is started by</div><div class="line">the JVM. For more information, see:</div><div class="line"></div><div class="line">http://activemq.apache.org/jmx.html</div><div class="line">–&gt;</div><div class="line">&lt;managementContext&gt;</div><div class="line">&lt;managementContext createConnector=”true” connectorPort=”1101“/&gt;</div><div class="line">&lt;/managementContext&gt;</div><div class="line"></div><div class="line">&lt;networkConnectors&gt; </div><div class="line">&lt;networkConnector uri=”multicast://default” </div><div class="line">dynamicOnly=”true” </div><div class="line">networkTTL=”3″ </div><div class="line">prefetchSize=”1″ </div><div class="line">decreaseNetworkConsumerPriority=”true” /&gt; </div><div class="line">&lt;/networkConnectors&gt;</div><div class="line"></div><div class="line">&lt;!–</div><div class="line">Configure message persistence for the broker. The default persistence</div><div class="line">mechanism is the KahaDB store (identified by the kahaDB tag).</div><div class="line">For more information, see:</div><div class="line"></div><div class="line">http://activemq.apache.org/persistence.html</div><div class="line">–&gt;</div><div class="line">&lt;persistenceAdapter&gt;</div><div class="line">&lt;kahaDB directory=”/data/data“/&gt;</div><div class="line">&lt;/persistenceAdapter&gt;</div><div class="line">&lt;!–</div><div class="line">The systemUsage controls the maximum amount of space the broker will</div><div class="line">use before disabling caching and/or slowing down producers. For more information, see:</div><div class="line">http://activemq.apache.org/producer-flow-control.html</div><div class="line">–&gt;</div><div class="line">&lt;systemUsage&gt;</div><div class="line">&lt;systemUsage&gt;</div><div class="line">&lt;memoryUsage&gt;</div><div class="line">&lt;memoryUsage percentOfJvmHeap=”70″ /&gt;</div><div class="line">&lt;/memoryUsage&gt;</div><div class="line">&lt;storeUsage&gt;</div><div class="line">&lt;storeUsage limit=”100 gb”/&gt;</div><div class="line">&lt;/storeUsage&gt;</div><div class="line">&lt;tempUsage&gt;</div><div class="line">&lt;tempUsage limit=”50 gb”/&gt;</div><div class="line">&lt;/tempUsage&gt;</div><div class="line">&lt;/systemUsage&gt;</div><div class="line">&lt;/systemUsage&gt;</div><div class="line"></div><div class="line">&lt;!–</div><div class="line">The transport connectors expose ActiveMQ over a given protocol to</div><div class="line">clients and other brokers. For more information, see:</div><div class="line"></div><div class="line">http://activemq.apache.org/configuring-transports.html</div><div class="line">–&gt;</div><div class="line">&lt;transportConnectors&gt;</div><div class="line">&lt;!– DOS protection, limit concurrent connections to 1000 and frame size to 100MB –&gt;</div><div class="line">&lt;transportConnector name=”openwire” discoveryUri=”multicast://default” uri=”tcp://0.0.0.0:61617?maximumConnections=1000&amp;amp;wireFormat.maxFrameSize=104857600″/&gt;</div><div class="line">&lt;transportConnector name=”mqtt” uri=”mqtt://0.0.0.0:1884?maximumConnections=1000&amp;amp;wireFormat.maxFrameSize=104857600″/&gt;</div><div class="line">&lt;/transportConnectors&gt;</div><div class="line"></div><div class="line">&lt;!– destroy the spring context on shutdown to stop jetty –&gt;</div><div class="line">&lt;shutdownHooks&gt;</div><div class="line">&lt;bean xmlns=”http://www.springframework.org/schema/beans” class=”org.apache.activemq.hooks.SpringContextHook” /&gt;</div><div class="line">&lt;/shutdownHooks&gt;</div><div class="line"></div><div class="line">&lt;/broker&gt;</div><div class="line"></div><div class="line">&lt;!–</div><div class="line">Enable web consoles, REST and Ajax APIs and demos</div><div class="line">The web consoles requires by default login, you can disable this in the jetty.xml file</div><div class="line"></div><div class="line">Take a look at $&#123;ACTIVEMQ_HOME&#125;/conf/jetty.xml for more details</div><div class="line">–&gt;</div><div class="line">&lt;import resource=”jetty.xml”/&gt;</div><div class="line"></div><div class="line">&lt;/beans&gt;</div></pre></td></tr></table></figure>
+<p>记得修改jetty.xml的端口，两个broker的端口不要重复。</p>
+<p>启动后，这样主从就做好了，平时这两个节点只有master在工作，slave待定状态，当master挂了之后，slave接管正常工作。</p>
+<p>slave的日志正常没工作的情况下显示：</p>
+<blockquote>
+<p>2015-0-21 09:04:29,637 | INFO | Database /data/data/lock is locked… waiting 10 seconds for the database to be unlocked. Reason: java.io.IOException: File ‘/data/data/lock’ could not be locked. | org.apache.activemq.store.SharedFileLocker | main<br>2015-05-21 09:04:39,640 | INFO | Database /data/data/lock is locked… waiting 10 seconds for the database to be unlocked. Reason: java.io.IOException: File ‘/data/data/lock’ could not be locked. |</p>
+</blockquote>
+<p>做好了之后，再通过负载均衡复制多个这样的节点，高可用的集群就搭建完成了。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/消息队列/" rel="tag"># 消息队列</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2013/04/18/mqtt-ha/" rel="next" title="Active MQ集群方案">
+                <i class="fa fa-chevron-left"></i> Active MQ集群方案
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2013/04/24/azure-ilb/" rel="prev" title="Azure-ILB配置">
+                Azure-ILB配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="方大壮" />
+          <p class="site-author-name" itemprop="name">方大壮</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">38</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#node1全配置"><span class="nav-number">2.</span> <span class="nav-text">node1全配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#node2全配置"><span class="nav-number">3.</span> <span class="nav-text">node2全配置</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2012 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">方大壮</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
