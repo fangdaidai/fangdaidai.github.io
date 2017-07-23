@@ -209,12 +209,12 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
+        <li class="menu-item menu-item-docker">
+          <a href="/docker" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
             
-            关于
+            menu.docker
           </a>
         </li>
       
@@ -716,7 +716,7 @@ command mode下，光标移动的控制键，h 左j
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/09/26/privilige/">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/09/26/puppet-install/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="方大壮">
@@ -738,8 +738,8 @@ command mode下，光标移动的控制键，h 左j
             
               
                 
-                <a class="post-title-link" href="/2012/09/26/privilige/" itemprop="url">
-                  User,Group,Permissions
+                <a class="post-title-link" href="/2012/09/26/puppet-install/" itemprop="url">
+                  puppet安装
                 </a>
               
             
@@ -815,13 +815,15 @@ command mode下，光标移动的控制键，h 左j
       
         
           
-          每个运维人员需要注意服务器的安全，账号安全就是其中一种。
-每个用户都有一个uid，存储在 /etc/passwd中。每个用户都有一个home目录。root 帐户下，less /etc/passwd后，可看到passwd内容。每个用户资料占用每一行，用6个冒号：分隔7个栏位。如：fangz:x:500:500:fangz:/home/fangz:/bin/bashfangz –用户名x –需要密码，空则代表无需密码500 –uid500 –gidfangz –fullname/home/fangz –home目录路径/bin/bash –用户登录后首先运行的进程
-root帐户下，less /et
+          安装准备服务端跟客户端均关闭防火墙[root@puppet01 ~]# service iptables stop
+[root@puppet01 ~]# chkconfig iptables off
+服务端跟客户端关闭修改selinux[root@puppet01 ~]# sed -i ‘SELINUX/s/enforce/disabled’ /etc/selinux/config
+服务端跟客户端修改hosts文件[root@puppet01 ~]# cat /etc/hosts
+1234127.0.0.1 localhost localhost.localdomain localhost4 
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2012/09/26/privilige/#more" rel="contents">
+            <a class="btn" href="/2012/09/26/puppet-install/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1010,7 +1012,7 @@ root帐户下，less /et
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/09/26/puppet-install/">
+    <link itemprop="mainEntityOfPage" href="https://fangdaidai.github.io/2012/09/26/privilige/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="方大壮">
@@ -1032,8 +1034,8 @@ root帐户下，less /et
             
               
                 
-                <a class="post-title-link" href="/2012/09/26/puppet-install/" itemprop="url">
-                  puppet安装
+                <a class="post-title-link" href="/2012/09/26/privilige/" itemprop="url">
+                  User,Group,Permissions
                 </a>
               
             
@@ -1109,15 +1111,13 @@ root帐户下，less /et
       
         
           
-          安装准备服务端跟客户端均关闭防火墙[root@puppet01 ~]# service iptables stop
-[root@puppet01 ~]# chkconfig iptables off
-服务端跟客户端关闭修改selinux[root@puppet01 ~]# sed -i ‘SELINUX/s/enforce/disabled’ /etc/selinux/config
-服务端跟客户端修改hosts文件[root@puppet01 ~]# cat /etc/hosts
-1234127.0.0.1 localhost localhost.localdomain localhost4 
+          每个运维人员需要注意服务器的安全，账号安全就是其中一种。
+每个用户都有一个uid，存储在 /etc/passwd中。每个用户都有一个home目录。root 帐户下，less /etc/passwd后，可看到passwd内容。每个用户资料占用每一行，用6个冒号：分隔7个栏位。如：fangz:x:500:500:fangz:/home/fangz:/bin/bashfangz –用户名x –需要密码，空则代表无需密码500 –uid500 –gidfangz –fullname/home/fangz –home目录路径/bin/bash –用户登录后首先运行的进程
+root帐户下，less /et
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2012/09/26/puppet-install/#more" rel="contents">
+            <a class="btn" href="/2012/09/26/privilige/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
