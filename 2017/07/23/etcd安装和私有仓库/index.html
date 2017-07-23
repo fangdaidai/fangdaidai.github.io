@@ -87,22 +87,22 @@
 
 
 
-<meta name="description" content="##前置准备服务器三台，分别是：172.16.6.100172.16.6.101172.16.6.102
-##启动私有仓库    docker run -d -p 5000:5000 –restart=always  -v /opt/registry:/tmp/registry registry:2.6.1
-##Cluster Store模式docker以Cluster Store模式启动，初始化">
+<meta name="description" content="前置准备服务器三台，分别是：172.16.6.100172.16.6.101172.16.6.102
+启动私有仓库docker run -d -p 5000:5000 --restart=always  -v /opt/registry:/tmp/registry registry:2.6.1
+Cluster Store模式docker以Cluster Store模式启动，初始化配置文件脚本。12">
 <meta property="og:type" content="article">
 <meta property="og:title" content="etcd install">
 <meta property="og:url" content="https://fangdaidai.github.io/2017/07/23/etcd安装和私有仓库/index.html">
 <meta property="og:site_name" content="矜能负才.Zero">
-<meta property="og:description" content="##前置准备服务器三台，分别是：172.16.6.100172.16.6.101172.16.6.102
-##启动私有仓库    docker run -d -p 5000:5000 –restart=always  -v /opt/registry:/tmp/registry registry:2.6.1
-##Cluster Store模式docker以Cluster Store模式启动，初始化">
-<meta property="og:updated_time" content="2017-07-23T03:51:30.832Z">
+<meta property="og:description" content="前置准备服务器三台，分别是：172.16.6.100172.16.6.101172.16.6.102
+启动私有仓库docker run -d -p 5000:5000 --restart=always  -v /opt/registry:/tmp/registry registry:2.6.1
+Cluster Store模式docker以Cluster Store模式启动，初始化配置文件脚本。12">
+<meta property="og:updated_time" content="2017-07-23T03:55:46.691Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="etcd install">
-<meta name="twitter:description" content="##前置准备服务器三台，分别是：172.16.6.100172.16.6.101172.16.6.102
-##启动私有仓库    docker run -d -p 5000:5000 –restart=always  -v /opt/registry:/tmp/registry registry:2.6.1
-##Cluster Store模式docker以Cluster Store模式启动，初始化">
+<meta name="twitter:description" content="前置准备服务器三台，分别是：172.16.6.100172.16.6.101172.16.6.102
+启动私有仓库docker run -d -p 5000:5000 --restart=always  -v /opt/registry:/tmp/registry registry:2.6.1
+Cluster Store模式docker以Cluster Store模式启动，初始化配置文件脚本。12">
 
 
 
@@ -369,14 +369,14 @@
       
 
       
-        <p>##前置准备<br>服务器三台，分别是：<br>172.16.6.100<br>172.16.6.101<br>172.16.6.102</p>
-<p>##启动私有仓库<br>    docker run -d -p 5000:5000 –restart=always  -v /opt/registry:/tmp/registry registry:2.6.1</p>
-<p>##Cluster Store模式<br>docker以Cluster Store模式启动，初始化配置文件脚本。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line"></div><div class="line">ETCD=etcd://172.16.6.100:2379</div><div class="line">DIR=/etc/systemd/system/docker.service.d/</div><div class="line">mkdir $DIR</div><div class="line"></div><div class="line">echo &quot;[Service]</div><div class="line">ExecStart=</div><div class="line">ExecStart=/usr/bin/dockerd -H unix:///var/run/docker.sock \</div><div class="line">--cluster-store $ETCD \</div><div class="line">--registry-mirror=http://172.16.6.100:5000 \</div><div class="line">--insecure-registry=http://172.16.6.100:5000 &gt; $DIR&quot;override.conf&quot;</div><div class="line"></div><div class="line">systemctl daemon-reload</div><div class="line">service docker stop</div><div class="line">service docker start</div></pre></td></tr></table></figure></p>
-<p>##启动etcd集群<br>节点1：172.16.6.100<br>启动脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">docker run --net=host -d --restart=always --name etcd-100 -v /opt/etcd-100:/data elcolio/etcd:2.0.10 -name etcd-100 \</div><div class="line">-advertise-client-urls http://172.16.6.100:2379 \</div><div class="line">-listen-client-urls http://0.0.0.0:2379 \</div><div class="line">-initial-advertise-peer-urls http://172.16.6.100:2380 \</div><div class="line">-listen-peer-urls http://0.0.0.0:2380 \</div><div class="line">-initial-cluster etcd-100=http://172.16.6.100:2380,etcd-101=http://172.16.6.101:2380,etcd-102=http://172.16.6.102:2380 \</div><div class="line">-initial-cluster-state new</div></pre></td></tr></table></figure></p>
+        <h2 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h2><p>服务器三台，分别是：<br>172.16.6.100<br>172.16.6.101<br>172.16.6.102</p>
+<h2 id="启动私有仓库"><a href="#启动私有仓库" class="headerlink" title="启动私有仓库"></a>启动私有仓库</h2><pre><code>docker run -d -p 5000:5000 --restart=always  -v /opt/registry:/tmp/registry registry:2.6.1
+</code></pre><h2 id="Cluster-Store模式"><a href="#Cluster-Store模式" class="headerlink" title="Cluster Store模式"></a>Cluster Store模式</h2><p>docker以Cluster Store模式启动，初始化配置文件脚本。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line"></div><div class="line">ETCD=etcd://172.16.6.100:2379</div><div class="line">DIR=/etc/systemd/system/docker.service.d/</div><div class="line">mkdir $DIR</div><div class="line"></div><div class="line">echo &quot;[Service]</div><div class="line">ExecStart=</div><div class="line">ExecStart=/usr/bin/dockerd -H unix:///var/run/docker.sock \</div><div class="line">--cluster-store $ETCD \</div><div class="line">--registry-mirror=http://172.16.6.100:5000 \</div><div class="line">--insecure-registry=http://172.16.6.100:5000 &gt; $DIR&quot;override.conf&quot;</div><div class="line"></div><div class="line">systemctl daemon-reload</div><div class="line">service docker stop</div><div class="line">service docker start</div></pre></td></tr></table></figure></p>
+<h2 id="启动etcd集群"><a href="#启动etcd集群" class="headerlink" title="启动etcd集群"></a>启动etcd集群</h2><p>节点1：172.16.6.100<br>启动脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">docker run --net=host -d --restart=always --name etcd-100 -v /opt/etcd-100:/data elcolio/etcd:2.0.10 -name etcd-100 \</div><div class="line">-advertise-client-urls http://172.16.6.100:2379 \</div><div class="line">-listen-client-urls http://0.0.0.0:2379 \</div><div class="line">-initial-advertise-peer-urls http://172.16.6.100:2380 \</div><div class="line">-listen-peer-urls http://0.0.0.0:2380 \</div><div class="line">-initial-cluster etcd-100=http://172.16.6.100:2380,etcd-101=http://172.16.6.101:2380,etcd-102=http://172.16.6.102:2380 \</div><div class="line">-initial-cluster-state new</div></pre></td></tr></table></figure></p>
 <p>节点2：<br>启动脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">docker run --net=host -d --restart=always --name etcd-101 -v /opt/etcd-101:/data elcolio/etcd:2.0.10 -name etcd-101 \</div><div class="line">-advertise-client-urls http://172.16.6.101:2379 \</div><div class="line">-listen-client-urls http://0.0.0.0:2379 \</div><div class="line">-initial-advertise-peer-urls http://172.16.6.101:2380 \</div><div class="line">-listen-peer-urls http://0.0.0.0:2380 \</div><div class="line">-initial-cluster etcd-100=http://172.16.6.100:2380,etcd-101=http://172.16.6.101:2380,etcd-102=http://172.16.6.102:2380 \</div><div class="line">-initial-cluster-state new</div></pre></td></tr></table></figure></p>
 <p>节点3：<br>启动脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">docker run --net=host -d --restart=always --name etcd-102 -v /opt/etcd-102:/data elcolio/etcd:2.0.10 -name etcd-102 \</div><div class="line">-advertise-client-urls http://172.16.6.102:2379 \</div><div class="line">-listen-client-urls http://0.0.0.0:2379 \</div><div class="line">-initial-advertise-peer-urls http://172.16.6.102:2380 \</div><div class="line">-listen-peer-urls http://0.0.0.0:2380 \</div><div class="line">-initial-cluster etcd-100=http://172.16.6.100:2380,etcd-101=http://172.16.6.101:2380,etcd-102=http://172.16.6.102:2380 \</div><div class="line">-initial-cluster-state new</div></pre></td></tr></table></figure></p>
-<p>##说明<br>–net=host为默认宿主机的网络，对consul开放即可，consul暂定也是用默认宿主机的地址，不加入calico网络。</p>
-<p>##集群检测<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">etcdctl  member list </div><div class="line">etcdctl cluster-health</div></pre></td></tr></table></figure></p>
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>–net=host为默认宿主机的网络，对consul开放即可，consul暂定也是用默认宿主机的地址，不加入calico网络。</p>
+<h2 id="集群检测"><a href="#集群检测" class="headerlink" title="集群检测"></a>集群检测</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">etcdctl  member list </div><div class="line">etcdctl cluster-health</div></pre></td></tr></table></figure>
 <p>具体命令说明查询 etcdctl –help</p>
 
       
@@ -414,8 +414,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2013/04/24/azure-ilb/" rel="next" title="Azure-ILB配置">
-                <i class="fa fa-chevron-left"></i> Azure-ILB配置
+              <a href="/2017/07/23/calico安装/" rel="next" title="calico install">
+                <i class="fa fa-chevron-left"></i> calico install
               </a>
             
           </div>
@@ -473,8 +473,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -532,6 +541,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前置准备"><span class="nav-number">1.</span> <span class="nav-text">前置准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动私有仓库"><span class="nav-number">2.</span> <span class="nav-text">启动私有仓库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cluster-Store模式"><span class="nav-number">3.</span> <span class="nav-text">Cluster Store模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动etcd集群"><span class="nav-number">4.</span> <span class="nav-text">启动etcd集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">5.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#集群检测"><span class="nav-number">6.</span> <span class="nav-text">集群检测</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

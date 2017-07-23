@@ -87,25 +87,22 @@
 
 
 
-<meta name="description" content="###安装准备服务器三台，分别是：172.16.6.100172.16.6.101172.16.6.102
+<meta name="description" content="安装准备服务器三台，分别是：172.16.6.100172.16.6.101172.16.6.102
 下载calicoctl工具，下载地址：    https://github.com/projectcalico/calico-containers/releases
-###容器启动
-节点1：启动脚本：12345#!/bin/shIP=172.16.6.100  calicoctl node">
+容器启动节点1：启动脚本：12345#!/bin/shIP=172.16.6.100  calicoctl node run \">
 <meta property="og:type" content="article">
 <meta property="og:title" content="calico install">
 <meta property="og:url" content="https://fangdaidai.github.io/2017/07/23/calico安装/index.html">
 <meta property="og:site_name" content="矜能负才.Zero">
-<meta property="og:description" content="###安装准备服务器三台，分别是：172.16.6.100172.16.6.101172.16.6.102
+<meta property="og:description" content="安装准备服务器三台，分别是：172.16.6.100172.16.6.101172.16.6.102
 下载calicoctl工具，下载地址：    https://github.com/projectcalico/calico-containers/releases
-###容器启动
-节点1：启动脚本：12345#!/bin/shIP=172.16.6.100  calicoctl node">
-<meta property="og:updated_time" content="2017-07-23T03:51:29.786Z">
+容器启动节点1：启动脚本：12345#!/bin/shIP=172.16.6.100  calicoctl node run \">
+<meta property="og:updated_time" content="2017-07-23T03:55:48.620Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="calico install">
-<meta name="twitter:description" content="###安装准备服务器三台，分别是：172.16.6.100172.16.6.101172.16.6.102
+<meta name="twitter:description" content="安装准备服务器三台，分别是：172.16.6.100172.16.6.101172.16.6.102
 下载calicoctl工具，下载地址：    https://github.com/projectcalico/calico-containers/releases
-###容器启动
-节点1：启动脚本：12345#!/bin/shIP=172.16.6.100  calicoctl node">
+容器启动节点1：启动脚本：12345#!/bin/shIP=172.16.6.100  calicoctl node run \">
 
 
 
@@ -372,20 +369,19 @@
       
 
       
-        <p>###安装准备<br>服务器三台，分别是：<br>172.16.6.100<br>172.16.6.101<br>172.16.6.102</p>
+        <h3 id="安装准备"><a href="#安装准备" class="headerlink" title="安装准备"></a>安装准备</h3><p>服务器三台，分别是：<br>172.16.6.100<br>172.16.6.101<br>172.16.6.102</p>
 <p>下载calicoctl工具，下载地址：<br>    <a href="https://github.com/projectcalico/calico-containers/releases" target="_blank" rel="external">https://github.com/projectcalico/calico-containers/releases</a></p>
-<p>###容器启动</p>
-<p>节点1：<br>启动脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">IP=172.16.6.100</div><div class="line">  calicoctl node run \</div><div class="line">    --node-image=quay.io/calico/node:v1.2.1 \</div><div class="line">    --ip=$IP --name=calico-100</div></pre></td></tr></table></figure></p>
+<h3 id="容器启动"><a href="#容器启动" class="headerlink" title="容器启动"></a>容器启动</h3><p>节点1：<br>启动脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">IP=172.16.6.100</div><div class="line">  calicoctl node run \</div><div class="line">    --node-image=quay.io/calico/node:v1.2.1 \</div><div class="line">    --ip=$IP --name=calico-100</div></pre></td></tr></table></figure></p>
 <p>节点2：<br>启动脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">IP=172.16.6.101</div><div class="line">  calicoctl node run \</div><div class="line">    --node-image=quay.io/calico/node:v1.2.1 \</div><div class="line">    --ip=$IP --name=calico-101</div></pre></td></tr></table></figure></p>
 <p>节点3：<br>启动脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">IP=172.16.6.102</div><div class="line">  calicoctl node run \</div><div class="line">    --node-image=quay.io/calico/node:v1.2.1 \</div><div class="line">    --ip=$IP --name=calico-102</div></pre></td></tr></table></figure></p>
-<p>###calico网络配置<br>  calicoctl在1.0以后的版本，命令与之前有所改变。calicoctl 1.0之后calicoctl管理的都是资源(resource)，之前版本的ip pool，profile， policy等都是资源。资源通过yaml或者json格式方式来定义，通过calicoctl create 或者apply来创建和应用，通过calicoctl get命令来查看。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"># calicoctl node status</div><div class="line"></div><div class="line">Calico process is running.</div><div class="line"></div><div class="line">IPv4 BGP status</div><div class="line">+--------------+-------------------+-------+------------+-------------+</div><div class="line">| PEER ADDRESS |     PEER TYPE     | STATE |   SINCE    |    INFO     |</div><div class="line">+--------------+-------------------+-------+------------+-------------+</div><div class="line">| 172.16.6.100 | node-to-node mesh | up    | 2017-07-17 | Established |</div><div class="line">| 172.16.6.101 | node-to-node mesh | up    | 2017-07-17 | Established |</div><div class="line">+--------------+-------------------+-------+------------+-------------+</div><div class="line"></div><div class="line">IPv6 BGP status</div><div class="line">No IPv6 peers found.</div></pre></td></tr></table></figure></p>
-<p>####创建docker网络<br>创建一个为apigate和normal的calico网络<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">docker network create --driver calico --ipam-driver calico-ipam apigate</div><div class="line">docker network create --driver calico --ipam-driver calico-ipam normal</div></pre></td></tr></table></figure></p>
+<h3 id="calico网络配置"><a href="#calico网络配置" class="headerlink" title="calico网络配置"></a>calico网络配置</h3><p>  calicoctl在1.0以后的版本，命令与之前有所改变。calicoctl 1.0之后calicoctl管理的都是资源(resource)，之前版本的ip pool，profile， policy等都是资源。资源通过yaml或者json格式方式来定义，通过calicoctl create 或者apply来创建和应用，通过calicoctl get命令来查看。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"># calicoctl node status</div><div class="line"></div><div class="line">Calico process is running.</div><div class="line"></div><div class="line">IPv4 BGP status</div><div class="line">+--------------+-------------------+-------+------------+-------------+</div><div class="line">| PEER ADDRESS |     PEER TYPE     | STATE |   SINCE    |    INFO     |</div><div class="line">+--------------+-------------------+-------+------------+-------------+</div><div class="line">| 172.16.6.100 | node-to-node mesh | up    | 2017-07-17 | Established |</div><div class="line">| 172.16.6.101 | node-to-node mesh | up    | 2017-07-17 | Established |</div><div class="line">+--------------+-------------------+-------+------------+-------------+</div><div class="line"></div><div class="line">IPv6 BGP status</div><div class="line">No IPv6 peers found.</div></pre></td></tr></table></figure></p>
+<h4 id="创建docker网络"><a href="#创建docker网络" class="headerlink" title="创建docker网络"></a>创建docker网络</h4><p>创建一个为apigate和normal的calico网络<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">docker network create --driver calico --ipam-driver calico-ipam apigate</div><div class="line">docker network create --driver calico --ipam-driver calico-ipam normal</div></pre></td></tr></table></figure></p>
 <p>查看网络<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"># docker network ls</div><div class="line">NETWORK ID          NAME                DRIVER              SCOPE</div><div class="line">e1ab5692360c        apigate             calico              global</div><div class="line">ba591edc3f88        bridge              bridge              local</div><div class="line">42410241dcf9        host                host                local</div><div class="line">0a034b98a86b        none                null                local</div><div class="line">1a13fb2765d9        normal              calico              global</div></pre></td></tr></table></figure></p>
-<p>####定义profile<br>创建profile.yaml文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">- apiVersion: v1</div><div class="line">  kind: profile</div><div class="line">  metadata:</div><div class="line">    name: normal</div><div class="line">    labels:</div><div class="line">      role: normal</div><div class="line">- apiVersion: v1</div><div class="line">  kind: profile</div><div class="line">  metadata:</div><div class="line">    name: apigate</div><div class="line">    labels:</div><div class="line">      role: apigate</div></pre></td></tr></table></figure></p>
+<h4 id="定义profile"><a href="#定义profile" class="headerlink" title="定义profile"></a>定义profile</h4><p>创建profile.yaml文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">- apiVersion: v1</div><div class="line">  kind: profile</div><div class="line">  metadata:</div><div class="line">    name: normal</div><div class="line">    labels:</div><div class="line">      role: normal</div><div class="line">- apiVersion: v1</div><div class="line">  kind: profile</div><div class="line">  metadata:</div><div class="line">    name: apigate</div><div class="line">    labels:</div><div class="line">      role: apigate</div></pre></td></tr></table></figure></p>
 <p>导入资源配置：<br>calicoctl create -f profile.yaml</p>
-<p>####定义policy<br>创建policy.yaml文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">- apiVersion: v1</div><div class="line">  kind: policy</div><div class="line">  metadata:</div><div class="line">    name: normal</div><div class="line">  spec:</div><div class="line">    order: 0</div><div class="line">    selector: role == &apos;normal&apos;</div><div class="line">    ingress:</div><div class="line">    - action: allow</div><div class="line">      source:</div><div class="line">        selector: role == &apos;normal&apos;</div><div class="line">    egress:</div><div class="line">    - action: allow</div><div class="line">- apiVersion: v1</div><div class="line">  kind: policy</div><div class="line">  metadata:</div><div class="line">    name: apigate</div><div class="line">  spec:</div><div class="line">    order: 0</div><div class="line">    selector: role == &apos;apigate&apos;</div><div class="line">    ingress:</div><div class="line">    - action: allow</div><div class="line">    egress:</div><div class="line">    - action: allow</div></pre></td></tr></table></figure></p>
+<h4 id="定义policy"><a href="#定义policy" class="headerlink" title="定义policy"></a>定义policy</h4><p>创建policy.yaml文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">- apiVersion: v1</div><div class="line">  kind: policy</div><div class="line">  metadata:</div><div class="line">    name: normal</div><div class="line">  spec:</div><div class="line">    order: 0</div><div class="line">    selector: role == &apos;normal&apos;</div><div class="line">    ingress:</div><div class="line">    - action: allow</div><div class="line">      source:</div><div class="line">        selector: role == &apos;normal&apos;</div><div class="line">    egress:</div><div class="line">    - action: allow</div><div class="line">- apiVersion: v1</div><div class="line">  kind: policy</div><div class="line">  metadata:</div><div class="line">    name: apigate</div><div class="line">  spec:</div><div class="line">    order: 0</div><div class="line">    selector: role == &apos;apigate&apos;</div><div class="line">    ingress:</div><div class="line">    - action: allow</div><div class="line">    egress:</div><div class="line">    - action: allow</div></pre></td></tr></table></figure></p>
 <p>在这里apigate这个网络的ingress和egress都是allow的，就是全部的（宿主机和calico网络中的container都能访问）</p>
-<p>####启动容器<br>节点1上启动一个aptgate：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -d --name apigate-100 --net=apigate  -e=&quot;CONSUL_CLUSTER=172.16.6.100&quot;   172.16.6.100:5000/td/apigate:0.0.3.12</div></pre></td></tr></table></figure></p>
+<h4 id="启动容器"><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h4><p>节点1上启动一个aptgate：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -d --name apigate-100 --net=apigate  -e=&quot;CONSUL_CLUSTER=172.16.6.100&quot;   172.16.6.100:5000/td/apigate:0.0.3.12</div></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># docker inspect  apigate-100 |grep IPAddress</div><div class="line">            &quot;SecondaryIPAddresses&quot;: null,</div><div class="line">            &quot;IPAddress&quot;: &quot;&quot;,</div><div class="line">                    &quot;IPAddress&quot;: &quot;192.168.171.216&quot;,</div></pre></td></tr></table></figure>
 <p>container的ip为192.168.171.216</p>
 <p>节点二启动一个tdesk的容器：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># docker run -d --name gtd_tdesk-101 --net=normal -e=&quot;CONSUL_CLUSTER=172.16.6.100&quot;  -v /app/resource:/opt/gorp/webnode/public  172.16.6.100:5000/td/gtd/tdesk:0.0.2.21</div></pre></td></tr></table></figure></p>
@@ -427,8 +423,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/07/23/consul安装/" rel="next" title="consul install">
-                <i class="fa fa-chevron-left"></i> consul install
+              <a href="/2013/04/24/azure-ilb/" rel="next" title="Azure-ILB配置">
+                <i class="fa fa-chevron-left"></i> Azure-ILB配置
               </a>
             
           </div>
@@ -436,6 +432,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/23/etcd安装和私有仓库/" rel="prev" title="etcd install">
+                etcd install <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -482,8 +482,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -541,6 +550,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装准备"><span class="nav-number">1.</span> <span class="nav-text">安装准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#容器启动"><span class="nav-number">2.</span> <span class="nav-text">容器启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#calico网络配置"><span class="nav-number">3.</span> <span class="nav-text">calico网络配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建docker网络"><span class="nav-number">3.1.</span> <span class="nav-text">创建docker网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#定义profile"><span class="nav-number">3.2.</span> <span class="nav-text">定义profile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#定义policy"><span class="nav-number">3.3.</span> <span class="nav-text">定义policy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#启动容器"><span class="nav-number">3.4.</span> <span class="nav-text">启动容器</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

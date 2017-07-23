@@ -87,25 +87,22 @@
 
 
 
-<meta name="description" content="##安装步骤
-###安装前准备卸载旧版本Docker的旧版本被称为docker或docker-engine 。 如果这些已安装，请卸载它们以及关联的依赖关系。
+<meta name="description" content="安装步骤安装前准备卸载旧版本Docker的旧版本被称为docker或docker-engine 。 如果这些已安装，请卸载它们以及关联的依赖关系。
 $ yum remove container-selinux docker*
-/var/lib/docker/的内容，包括镜像，容器，卷和网络都被保留。 Docker CE包现在称为docker-ce ，Docker EE包现在称为dock">
+/var/lib/docker/的内容，包括镜像，容器，卷和网络都被保留。 Docker CE包现在称为docker-ce ，Docker EE包现在称为docker-ee。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="docker install">
 <meta property="og:url" content="https://fangdaidai.github.io/2017/07/23/docker-ce安装/index.html">
 <meta property="og:site_name" content="矜能负才.Zero">
-<meta property="og:description" content="##安装步骤
-###安装前准备卸载旧版本Docker的旧版本被称为docker或docker-engine 。 如果这些已安装，请卸载它们以及关联的依赖关系。
+<meta property="og:description" content="安装步骤安装前准备卸载旧版本Docker的旧版本被称为docker或docker-engine 。 如果这些已安装，请卸载它们以及关联的依赖关系。
 $ yum remove container-selinux docker*
-/var/lib/docker/的内容，包括镜像，容器，卷和网络都被保留。 Docker CE包现在称为docker-ce ，Docker EE包现在称为dock">
-<meta property="og:updated_time" content="2017-07-23T03:51:31.812Z">
+/var/lib/docker/的内容，包括镜像，容器，卷和网络都被保留。 Docker CE包现在称为docker-ce ，Docker EE包现在称为docker-ee。">
+<meta property="og:updated_time" content="2017-07-23T03:55:47.597Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="docker install">
-<meta name="twitter:description" content="##安装步骤
-###安装前准备卸载旧版本Docker的旧版本被称为docker或docker-engine 。 如果这些已安装，请卸载它们以及关联的依赖关系。
+<meta name="twitter:description" content="安装步骤安装前准备卸载旧版本Docker的旧版本被称为docker或docker-engine 。 如果这些已安装，请卸载它们以及关联的依赖关系。
 $ yum remove container-selinux docker*
-/var/lib/docker/的内容，包括镜像，容器，卷和网络都被保留。 Docker CE包现在称为docker-ce ，Docker EE包现在称为dock">
+/var/lib/docker/的内容，包括镜像，容器，卷和网络都被保留。 Docker CE包现在称为docker-ce ，Docker EE包现在称为docker-ee。">
 
 
 
@@ -372,13 +369,12 @@ $ yum remove container-selinux docker*
       
 
       
-        <p>##安装步骤</p>
-<p>###安装前准备<br>卸载旧版本<br>Docker的旧版本被称为docker或docker-engine 。 如果这些已安装，请卸载它们以及关联的依赖关系。</p>
+        <h2 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h2><h3 id="安装前准备"><a href="#安装前准备" class="headerlink" title="安装前准备"></a>安装前准备</h3><p>卸载旧版本<br>Docker的旧版本被称为docker或docker-engine 。 如果这些已安装，请卸载它们以及关联的依赖关系。</p>
 <pre><code>$ yum remove container-selinux docker*
 </code></pre><p>/var/lib/docker/的内容，包括镜像，容器，卷和网络都被保留。 Docker CE包现在称为docker-ce ，Docker EE包现在称为docker-ee。</p>
-<p>###安装Dcoker<br>根据需要以不同的方式安装Docker：<br>大多数用户设置了Docker的存储库并从中安装，以方便安装和升级任务。 这是推荐的方法。<br>某些用户下载RPM软件包并手动安装，并手动完成管理升级。 这在诸如在没有访问互联网的空中密码系统上安装Docker的情况下是有用的。</p>
-<p>####使用存储库安装<br>在新主机上首次安装Docker之前，需要设置Docker存储库。之后，可以从存储库安装和更新Docker。</p>
-<p>#####设置存储库<br>安装所需的软件包 yum-utils提供了yum-config-manager实用程序， device-mapper-persistent-data和lvm2是devicemapper存储驱动程序所必需的。</p>
+<h3 id="安装Dcoker"><a href="#安装Dcoker" class="headerlink" title="安装Dcoker"></a>安装Dcoker</h3><p>根据需要以不同的方式安装Docker：<br>大多数用户设置了Docker的存储库并从中安装，以方便安装和升级任务。 这是推荐的方法。<br>某些用户下载RPM软件包并手动安装，并手动完成管理升级。 这在诸如在没有访问互联网的空中密码系统上安装Docker的情况下是有用的。</p>
+<h4 id="使用存储库安装"><a href="#使用存储库安装" class="headerlink" title="使用存储库安装"></a>使用存储库安装</h4><p>在新主机上首次安装Docker之前，需要设置Docker存储库。之后，可以从存储库安装和更新Docker。</p>
+<h5 id="设置存储库"><a href="#设置存储库" class="headerlink" title="设置存储库"></a>设置存储库</h5><p>安装所需的软件包 yum-utils提供了yum-config-manager实用程序， device-mapper-persistent-data和lvm2是devicemapper存储驱动程序所必需的。</p>
 <pre><code>$ sudo yum install -y yum-utils device-mapper-persistent-data lvm2
 </code></pre><p>使用以下命令设置稳定版本库。</p>
 <pre><code>$ sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
@@ -390,7 +386,7 @@ $ yum remove container-selinux docker*
 <pre><code>$ sudo systemctl start docker
 </code></pre><p>通过运行hello-world映像来验证docker是否正确安装。</p>
 <pre><code>$ sudo docker run hello-world
-</code></pre><p>##升级docker<br>首先运行sudo yum makecache fast ，然后按照安装说明，选择要安装的新版本。<br>yum -y upgrade  docker-ce</p>
+</code></pre><h2 id="升级docker"><a href="#升级docker" class="headerlink" title="升级docker"></a>升级docker</h2><p>首先运行sudo yum makecache fast ，然后按照安装说明，选择要安装的新版本。<br>yum -y upgrade  docker-ce</p>
 
       
     </div>
@@ -486,8 +482,17 @@ $ yum remove container-selinux docker*
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -545,6 +550,22 @@ $ yum remove container-selinux docker*
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装步骤"><span class="nav-number">1.</span> <span class="nav-text">安装步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装前准备"><span class="nav-number">1.1.</span> <span class="nav-text">安装前准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装Dcoker"><span class="nav-number">1.2.</span> <span class="nav-text">安装Dcoker</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用存储库安装"><span class="nav-number">1.2.1.</span> <span class="nav-text">使用存储库安装</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#设置存储库"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">设置存储库</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#升级docker"><span class="nav-number">2.</span> <span class="nav-text">升级docker</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
